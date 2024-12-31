@@ -47,9 +47,14 @@ let Users = new Schema({
     address : {
         type:String
     },
+    role : {
+        type : String,
+        enum : ['User','Admin'],
+        default : "User"
+    },
     posts : [
         {type : mongoose.Types.ObjectId,ref:'Posts'}
-    ]
+    ]   
     
 },{
     timestamps : true
