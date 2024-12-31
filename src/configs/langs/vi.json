@@ -1,0 +1,7 @@
+{
+    "invalid.token": "Token không hợp lệ",
+    "error.relogin": "Có lỗi xảy ra, vui lòng đăng nhập lại",
+    "error.already_exists_user": "Thông tin người đã tồn tại",
+    "errors.login_fail": "Đăng nhập thất bại",
+    "error.invalid.publicKey": "Thông tin public key không hợp lệ"
+}
