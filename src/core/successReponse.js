@@ -1,4 +1,4 @@
-import {statusCode} from "./httpStatusCode";
+import {statusCode} from "./httpStatusCode.js";
 
 class SuccessResponse {
 

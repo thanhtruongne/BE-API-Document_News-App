@@ -1,9 +1,10 @@
 'use strict'
 
 import express, { Router } from 'express';
-import Users from '../models/user.js';
+import authController from '../controllers/authController.js';
 
 const router = express.Router();
 
+router.post('/register',authController.sign_up_temp);
 
 export default router;

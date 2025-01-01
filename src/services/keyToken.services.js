@@ -1,14 +1,15 @@
-import keyToken from "../models/keyToken.model";
+import KeyModel from "../models/keytoken.model.js";
 
 
 class KeyTokenService {
 
     static createKeyTokenMappingModel = async({userId,publicKey,privateKey}) => {
         try {
-            const tokens = await keyToken.create({
+            console.log(publicKey,privateKey);
+            const tokens = await KeyModel.create({
                 user : userId,
-                publicKey : publicKey.toString(),
-                privateKey : privateKey.toString()
+                publicKey, 
+                privateKey ,
             })
             return tokens ? tokens.publicKey : null;
         } catch (error) {

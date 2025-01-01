@@ -1,6 +1,6 @@
-import reasonPhrases from "./reasonPhrases"
-import statusCode from "./statusCode"
+import reasonPhrases from "./reasonPhrases.js"
+import statusCode from "./statusCode.js"
 export  {
     statusCode,
-    reasonError
+    reasonPhrases
 }

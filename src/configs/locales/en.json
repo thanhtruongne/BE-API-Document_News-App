@@ -3,5 +3,6 @@
     "error.relogin": "Some thing went wrong, please login again",
     "error.already_exists_user": "Infomations already exists",
     "errors.login_fail": "Login Fails",
-    "error.invalid.publicKey": "Infomation publicKey was invalid"
+    "error.invalid.publicKey": "Infomation publicKey was invalid",
+    "error.message.commit" : "Error message"
 }

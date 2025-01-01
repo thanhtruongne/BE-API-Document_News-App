@@ -14,8 +14,9 @@ let keyToken = new Schema({
         trim: true
     },
 },{
-    timestamps : true
+    timestamps : true,
+    collection: 'Keys'
 })
 
-export default mongoose.model('keyTokens',keyToken);   
+export default mongoose.model('Key',keyToken);   
 

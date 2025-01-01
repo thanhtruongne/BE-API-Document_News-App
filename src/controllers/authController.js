@@ -1,6 +1,6 @@
-import catchingAsyncAwait from "../helpers/catching.aysnc";
-import { CREATED_ATTEMP, REQUEST_SUCCESS } from "../core/successReponse";
-import authServices from "../services/auth.services";
+import catchingAsyncAwait from "../helpers/catchingAsyncAwait.aysnc.js";
+import { CREATED_ATTEMP, REQUEST_SUCCESS } from "../core/successReponse.js";
+import authServices from "../services/auth.services.js";
 
 
 class AuthController {
