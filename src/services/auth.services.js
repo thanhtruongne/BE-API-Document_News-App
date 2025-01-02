@@ -11,11 +11,46 @@ import mongoose from 'mongoose';
 
 class AuthService {
     async login({email,password}) {
-         
+        const user_attemp = await user.findOne({email}).lean()
+        if (!user_attemp) throw new Api403Error(i18n.translate('messages.error002'))
+
+        const match = bcrypt.compare(password, user_attemp?.password)
+        if (!match) throw new BusinessLogicError(i18n.translate('errors.login_fail'))
+        const {
+            publicKey,
+            privateKey,
+        } = crypto.generateKeyPairSync('rsa', {
+            modulusLength: 4096,
+            publicKeyEncoding: {
+                type: 'pkcs1',
+                format: 'pem',
+            },
+            privateKeyEncoding: {
+                type: 'pkcs1',
+                format: 'pem',
+            },
+        });
+        const {_id: userId} = user_attemp
+        const tokens = await createTokenAccessData({
+            userId: userId.toString(),
+            email
+        }, publicKey, privateKey)
+
+        await keyTokenServices.createKeyTokenMappingModel({
+            userId: userId.toString(),
+            privateKey,
+            publicKey,
+            refreshToken: tokens?.refresh_token,
+        })
+
+        return {
+            users: getSelectData({
+                fields: ['_id', 'name', 'email'],
+                object: user_attemp
+            }),
+            tokens
+        }
     }
-
-
-
     async signup({email,password,full_name,phone}){
         const session = await mongoose.startSession();
         session.startTransaction();

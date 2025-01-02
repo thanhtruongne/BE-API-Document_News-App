@@ -37,7 +37,7 @@ const CREATED_ATTEMP = (res, message, data, options = {}) => {
     }).send(res)
 }
 
-const REQUEST_SUCCESS = (res, message, data, options = {}) => {
+const REQUEST_CUSTOM = (res, message, data, options = {}) => {
     new Success({
         message,
         data,

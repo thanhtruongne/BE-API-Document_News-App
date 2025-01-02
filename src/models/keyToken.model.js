@@ -9,10 +9,13 @@ let keyToken = new Schema({
         type:String,
         trim: true
     },
-    privateKey: {
+    privateKey: {   
         type: String,
         trim: true
     },
+    refreshToken: {
+        type: String,
+    }
 },{
     timestamps : true,
     collection: 'Keys'

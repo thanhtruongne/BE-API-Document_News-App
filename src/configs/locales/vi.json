@@ -2,7 +2,14 @@
     "invalid.token": "Token không hợp lệ",
     "error.relogin": "Có lỗi xảy ra, vui lòng đăng nhập lại",
     "error.already_exists_user": "Thông tin người đã tồn tại",
-    "errors.login_fail": "Đăng nhập thất bại",
+    "errors.login_fail": "Email hoặc mật khẩu không đúng",
     "error.invalid.publicKey": "Thông tin public key không hợp lệ",
-    "error.message.commit" : "Dữ liệu lỗi"
+    "error.required.field" : "Các fields không được bỏ trống",
+    "error.Invalid.email" : "Email không hợp lệ",
+    "error.Invalid.password" : "Mật khẩu có viết hoa, thường, số, ký tự đặc biệt ít nhất 8 ký tự",
+    "error.Invalid.phone" : "Số diện thoại không hợp lệ",
+    "error.message.commit" : "Dữ liệu lỗi",
+    "error.not_found.data" : "Dữ liệu không hợp lệ hoặc bị lỗi",
+    "key.nestedset.parent.not_found" : "Dữ liệu parent không tìm thấy"
+
 }

@@ -1,7 +1,7 @@
 'use strict'
 
 import express from 'express';
-import userRoutes from './user.js';
+import userRoutes from './user.route.js';
 
 
 let initRoutes = (app) => {
