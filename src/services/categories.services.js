@@ -55,8 +55,6 @@ class CategoriesService {
         await model.save()
         return comment
     }
-       
-    
 
 }
 

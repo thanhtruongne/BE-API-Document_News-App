@@ -12,6 +12,19 @@ class AuthController {
     sign_up_temp = catchingAsyncAwait(async(req,res) => {
         CREATED_ATTEMP(res,'Created successfully',await authServices.signup(req.body))
     })
+
+    logout_temp = catchingAsyncAwait(async(req,res) => {
+        REQUEST_CUSTOM(res,'Logout successfully',await authServices.logout(req.store))
+    })
+    
+    refreshToken = catchingAsyncAwait(async(req,res) => {
+        REQUEST_CUSTOM(res,'RefreshToken successfully',await authServices.refreshToken({
+            refreshToken : req.refreshToken,
+            user : req.user,
+            store : req.store
+        }))
+    })
+     
 }
 
 

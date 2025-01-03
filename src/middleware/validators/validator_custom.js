@@ -38,9 +38,11 @@ const validateRequestLogin = (req,res,next) => {
     return next()
 }
 
+
 export {
     validateRequestSignIn,
-    validateRequestLogin
+    validateRequestLogin,
+    authencation
 }
 
 

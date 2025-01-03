@@ -15,6 +15,11 @@ let keyToken = new Schema({
     },
     refreshToken: {
         type: String,
+        
+    },
+    refreshTokensUsed: {
+        type: Array,
+        default : []
     }
 },{
     timestamps : true,

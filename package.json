@@ -30,6 +30,7 @@
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.2",
     "morgan": "^1.10.0",
+    "redis": "^4.7.0",
     "uuid": "^11.0.3",
     "validator": "^13.12.0",
     "winston": "^3.17.0"

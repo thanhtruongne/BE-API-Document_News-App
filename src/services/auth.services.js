@@ -121,6 +121,20 @@ class AuthService {
         }
        
     }
+
+
+    async logout(store) {
+       try {
+            const delete_keyToken = await keyTokenServices.deleteKeyById(store?._id);
+            return delete_keyToken;
+       } catch (error) {
+           throw new Api403Error(i18n.translate('error.message.commit'));
+       }
+    }
+
+    async refreshToken({refreshToken,user,store}) {
+
+    }
 }
 
 

@@ -10,6 +10,8 @@
     "error.Invalid.phone" : "Số diện thoại không hợp lệ",
     "error.message.commit" : "Dữ liệu lỗi",
     "error.not_found.data" : "Dữ liệu không hợp lệ hoặc bị lỗi",
+    "error.user_id.not_found" : "Dữ liệu user không tìm thấy hoặc lỗi",
+    "error.invalid.request" : "Đường truyền dữ liệu lỗi",
     "key.nestedset.parent.not_found" : "Dữ liệu parent không tìm thấy"
 
 }
