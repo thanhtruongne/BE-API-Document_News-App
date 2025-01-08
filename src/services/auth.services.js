@@ -10,12 +10,24 @@ import mongoose from 'mongoose';
 
 
 class AuthService {
-    async login({email,password}) {
+    async login(reqData) {
+        const { email, password, system } = reqData;
         const user_attemp = await user.findOne({email}).lean()
-        if (!user_attemp) throw new Api403Error(i18n.translate('messages.error002'))
+        if (!user_attemp) {
+             throw new Api403Error(i18n.translate('messages.error002'))
+        }
 
         const match = bcrypt.compare(password, user_attemp?.password)
         if (!match) throw new BusinessLogicError(i18n.translate('errors.login_fail'))
+
+        if(system && user_attemp?.role != 'Admin') {
+            throw new BusinessLogicError(i18n.translate('errors.login_fail'))
+        }
+
+        if(user_attemp?.status == 'Block' || user_attemp?.status == 'Deleted') {
+            throw new Api401Error(i18n.translate('errors.login_fail'))
+        }
+        
         const {
             publicKey,
             privateKey,
@@ -44,13 +56,16 @@ class AuthService {
         })
 
         return {
-            users: getSelectData({
-                fields: ['_id', 'name', 'email'],
-                object: user_attemp
-            }),
+            users: getSelectData(
+                 ['_id', 'full_name','status', 'email','role'],
+                 user_attemp,
+            ),
             tokens
         }
     }
+
+
+
     async signup({email,password,full_name,phone}){
         const session = await mongoose.startSession();
         session.startTransaction();

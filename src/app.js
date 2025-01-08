@@ -1,8 +1,10 @@
 
 import connectDBMongoose from "./databases/init.js";
 import { countConnectionMongoDB,CheckOverloadConnect } from "./helpers/check_connection.js";
+import {is404Handler,returnError } from "./middleware/errorHandler.js";
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 import morgan from 'morgan';
 import compression from 'compression'
 import dotenv from 'dotenv';
@@ -14,6 +16,13 @@ dotenv.config();
 
 const app = express();
 app.use(morgan('dev'));
+console.log(process.env.REACT_APP_FRONTEND)
+app.use(cors({
+    origin : process.env.REACT_APP_FRONTEND,
+    credentials : true
+}))
+
+
 app.use(helmet.frameguard({
     action: 'deny'
 }));
@@ -41,9 +50,7 @@ app.use(helmet.referrerPolicy({
     policy: "no-referrer",
 }))
 
-app.use(compression());
-
-
+// app.use(compression());
 
 
 app.use(express.json({limit: '10kb'}));
@@ -54,17 +61,15 @@ app.use(cookieParser());
 
 
 
-// connectDBMongoose
 CheckOverloadConnect()//check overload
-
-// count connect
-
-
 //init routes
 initRoutes(app)
+
+//errorHandler
+// app.use(is404Handler);
+app.use(returnError)
 
 //set tạm
 app.use(i18n.init)
 
-// app.use('',router)
 export default app;

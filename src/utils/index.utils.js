@@ -1,6 +1,6 @@
 import _ from 'lodash'  
 import validator from 'validator'
-const getSelectData = ({fields = [] , obj = {}}) => {
+const getSelectData = (fields = [] , obj = {}) => {
    return _.pick(obj,fields);
 }
 
@@ -18,8 +18,8 @@ const checkEmptyVal = (field) => {
 
 //pass có viết hoa, thường, số, ký tự đặc biệt ít nhất 8 ký tự
 const checkPasswordValid = (password) => {
-    const preg_match = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/";
-    return preg_match.test(password);
+    const preg_match = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return preg_match?.test(password);
 }
 
 const checkValidatePhone = (phone) => {

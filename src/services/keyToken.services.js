@@ -5,7 +5,7 @@ class KeyTokenService {
 
     static createKeyTokenMappingModel = async({userId,publicKey,privateKey,refreshToken}) => {
         try {
-            const tokens = await keyTokenModel.findOneAndUpdate({user: userId}, {
+            const tokens = await KeyModel.findOneAndUpdate({user: userId}, {
                 publicKey, privateKey, refreshTokensUsed: [], refreshToken
             },{upsert : true, new : true});
 
