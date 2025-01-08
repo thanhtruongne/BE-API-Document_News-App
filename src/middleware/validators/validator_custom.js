@@ -7,7 +7,7 @@ import
     checkPasswordValid 
 } from "../../utils/index.utils.js";
 import i18n from "../../configs/i18n.config.js";
-
+import catchingAsyncAwait from "../../helpers/catchingAsyncAwait.aysnc.js";
 
 const validateRequestSignIn = (req,res,next) => {
    const body = req.body;
@@ -39,10 +39,11 @@ const validateRequestLogin = (req,res,next) => {
 }
 
 
+
+
 export {
     validateRequestSignIn,
     validateRequestLogin,
-    authencation
 }
 
 

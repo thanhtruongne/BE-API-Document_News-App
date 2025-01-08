@@ -2,7 +2,7 @@
 
 import express from 'express';
 import authController from '../controllers/authController.js';
-import { validateRequestLogin,validateRequestSignIn } from '../middleware/validators/auth.middleware.js';
+import { validateRequestLogin,validateRequestSignIn } from '../middleware/validators/validator_custom.js';
 import { authencation } from '../utils/auth.utils.js';
 const router = express.Router();
 

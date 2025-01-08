@@ -47,5 +47,5 @@ const REQUEST_CUSTOM = (res, message, data, options = {}) => {
 
 export {
     CREATED_ATTEMP,
-    REQUEST_SUCCESS
+    REQUEST_CUSTOM
 }
