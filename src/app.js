@@ -16,39 +16,40 @@ dotenv.config();
 
 const app = express();
 app.use(morgan('dev'));
-console.log(process.env.REACT_APP_FRONTEND)
+
+
 app.use(cors({
     origin : process.env.REACT_APP_FRONTEND,
     credentials : true
 }))
 
 
-app.use(helmet.frameguard({
-    action: 'deny'
-}));
-// strict transport security
-const reqDuration = 2629746000;
-app.use(
-    helmet.hsts({
-        maxAge: reqDuration,
-    })
-);
+// app.use(helmet.frameguard({
+//     action: 'deny'
+// }));
+// // strict transport security
+// const reqDuration = 2629746000;
+// app.use(
+//     helmet.hsts({
+//         maxAge: reqDuration,
+//     })
+// );
 
 // content security policy
-app.use(helmet.contentSecurityPolicy({
-    directives: {
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'"],
-    },
-}))
+// app.use(helmet.contentSecurityPolicy({
+//     directives: {
+//         scriptSrc: ["'self'"],
+//         styleSrc: ["'self'"],
+//     },
+// }))
 // x content type options
-app.use(helmet.noSniff());
-// x xss protection
-app.use(helmet.xssFilter())
-// referrer policy
-app.use(helmet.referrerPolicy({
-    policy: "no-referrer",
-}))
+// app.use(helmet.noSniff());
+// // x xss protection
+// app.use(helmet.xssFilter())
+// // referrer policy
+// app.use(helmet.referrerPolicy({
+//     policy: "no-referrer",
+// }))
 
 // app.use(compression());
 

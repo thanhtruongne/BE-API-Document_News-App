@@ -1,20 +1,17 @@
 import i18n from "../configs/i18n.config.js";
 import { Api403Error,Api401Error, Api404Error,BusinessLogicError } from "../core/error.response.js";
 import user from "../models/user.js";
-import { createTokenAccessData } from "../utils/auth.utils.js";
 import bcrypt from 'bcrypt';
-import crypto from 'crypto'
 import keyTokenServices from "./keyToken.services.js";
 import { getSelectData } from "../utils/index.utils.js";
-import mongoose from 'mongoose';
-
+import crypto from "crypto"
 
 class AuthService {
     async login(reqData) {
         const { email, password, system } = reqData;
         const user_attemp = await user.findOne({email}).lean()
         if (!user_attemp) {
-             throw new Api403Error(i18n.translate('messages.error002'))
+             throw new Api403Error(i18n.translate('error.user.invalid'))
         }
 
         const match = bcrypt.compare(password, user_attemp?.password)
@@ -28,33 +25,7 @@ class AuthService {
             throw new Api401Error(i18n.translate('errors.login_fail'))
         }
         
-        const {
-            publicKey,
-            privateKey,
-        } = crypto.generateKeyPairSync('rsa', {
-            modulusLength: 4096,
-            publicKeyEncoding: {
-                type: 'pkcs1',
-                format: 'pem',
-            },
-            privateKeyEncoding: {
-                type: 'pkcs1',
-                format: 'pem',
-            },
-        });
-        const {_id: userId} = user_attemp
-        const tokens = await createTokenAccessData({
-            userId: userId.toString(),
-            email
-        }, publicKey, privateKey)
-
-        await keyTokenServices.createKeyTokenMappingModel({
-            userId: userId.toString(),
-            privateKey,
-            publicKey,
-            refreshToken: tokens?.refresh_token,
-        })
-
+        const tokens = await keyTokenServices.getTokenKeys(user_attemp)
         return {
             users: getSelectData(
                  ['_id', 'full_name','status', 'email','role'],
@@ -67,9 +38,6 @@ class AuthService {
 
 
     async signup({email,password,full_name,phone}){
-        const session = await mongoose.startSession();
-        session.startTransaction();
-
         try {
             const payload_used = await user.findOne({email}).lean();
             if(payload_used) {
@@ -84,43 +52,9 @@ class AuthService {
             if(!uses_create) {
                 throw new Api401Error(i18n.translate('error.relogin'))
             }
-           
-            const {
-                publicKey,
-                privateKey,
-            } = crypto.generateKeyPairSync('rsa', {
-                modulusLength: 4096,
-                publicKeyEncoding: {
-                    type: 'pkcs1',
-                    format: 'pem',
-                },
-                privateKeyEncoding: {
-                    type: 'pkcs1',
-                    format: 'pem',
-                },
-            });
-           
-            //create key token model
-            const publicKeyString = await keyTokenServices.createKeyTokenMappingModel({
-                userId : uses_create?._id,
-                publicKey : publicKey.toString(),
-                privateKey : privateKey.toString(),
-            })
+              
+            const tokens = await keyTokenServices.getTokenKeys(uses_create)
 
-            if (!publicKeyString) {
-                throw new BusinessLogicError(i18n.translate('error.invalid.publicKey'))
-            }
-        
-            const publicKeyObject = crypto.createPublicKey(publicKeyString);
-          
-            const tokens = await createTokenAccessData(
-                {userID : uses_create?._id , emali : uses_create?.email, phone : uses_create?.phone},
-                publicKeyObject,
-                privateKey
-            )
-            //commit dữ liệu
-            await session.commitTransaction();
-            session.endSession();
             return {
                 tokens,
                 data : getSelectData({
@@ -129,12 +63,8 @@ class AuthService {
                 })
             }
         } catch (error) {
-            await session.abortTransaction();
             throw new Api404Error(error)
-        } finally {
-            session.endSession();
-        }
-       
+        } 
     }
 
 
@@ -149,6 +79,21 @@ class AuthService {
 
     async refreshToken({refreshToken,user,store}) {
 
+    }
+    
+    async profile(store){
+       try {
+            const user_attemp = await user.findOne({_id : store?.userID , email : store?.email }).lean()
+            if(!user_attemp) {
+                throw new Api403Error(i18n.translate('error.user.invalid'))
+            }
+            return  getSelectData(
+                ['_id', 'full_name','status', 'email','role'],
+                user_attemp,
+            )
+       } catch (error) {
+            throw new Api403Error(i18n.translate('error.message.commit'));
+       }
     }
 }
 

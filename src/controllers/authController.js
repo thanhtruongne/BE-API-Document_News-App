@@ -14,7 +14,9 @@ class AuthController {
     })
 
     logout_temp = catchingAsyncAwait(async(req,res) => {
-        REQUEST_CUSTOM(res,'Logout successfully',await authServices.logout(req.store))
+        REQUEST_CUSTOM(res,'Logout successfully',await authServices.logout(req.store),{
+            deleted : true
+        })
     })
     
     refreshToken = catchingAsyncAwait(async(req,res) => {
@@ -23,6 +25,10 @@ class AuthController {
             user : req.user,
             store : req.store
         }))
+    })
+
+    profile_temp = catchingAsyncAwait(async(req,res) => {
+        REQUEST_CUSTOM(res,'Successfully',await authServices.profile(req.user))
     })
      
 }

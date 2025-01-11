@@ -13,7 +13,7 @@ router.use(authencation);
 
 router.post('/logout',authController.logout_temp)
 router.post('/refresh-token', authController.refreshToken)
-
+router.get('/profile', authController.profile_temp)
 
     
 export default router;  

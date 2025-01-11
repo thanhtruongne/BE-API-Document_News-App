@@ -9,10 +9,10 @@ let keyToken = new Schema({
         type:String,
         trim: true
     },
-    privateKey: {   
-        type: String,
-        trim: true
-    },
+    // privateKey: {   
+    //     type: String,
+    //     trim: true
+    // },
     refreshToken: {
         type: String,
         

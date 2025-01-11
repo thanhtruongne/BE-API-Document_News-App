@@ -15,6 +15,7 @@ const returnError = (err, req, res, next) => {
         error.errors = err.errors
     } else {
         error = {...err}
+        console.log(error,err.name,err);
         // mapping error
         if (err.name === 'CastError') error = handleCastErrorDB(err);
         if (err.code === 11000) error = handleDuplicateFieldsDB(err)
@@ -22,7 +23,6 @@ const returnError = (err, req, res, next) => {
         if (err.name === 'JsonWebTokenError') error = handlerJWTError(err)
         if (err.name === 'TokenExpiredError') error = handlerJWTExpiredError(err)
     }
-
     return res.status(statusCode).json({
         code: statusCode,
         status : 'error',
