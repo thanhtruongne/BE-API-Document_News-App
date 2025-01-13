@@ -9,13 +9,22 @@ let keyToken = new Schema({
         type:String,
         trim: true
     },
-    privateKey: {
+    // privateKey: {   
+    //     type: String,
+    //     trim: true
+    // },
+    refreshToken: {
         type: String,
-        trim: true
+        
     },
+    refreshTokensUsed: {
+        type: Array,
+        default : []
+    }
 },{
-    timestamps : true
+    timestamps : true,
+    collection: 'Keys'
 })
 
-export default mongoose.model('keyTokens',keyToken);   
+export default mongoose.model('Key',keyToken);   
 

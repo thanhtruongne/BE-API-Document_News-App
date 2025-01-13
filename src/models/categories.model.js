@@ -1,28 +1,28 @@
 import mongoose,{Schema} from "mongoose";
-import NestedSetPlugin  from "mongoose-nested-set";
-let Categories = new Schema({
+
+const Categories = new Schema({
     title : {
         type:String,
         required : true
     },   
     slug : {
         type:String,
-        required:true,
         uniqe:true,
         lowercase:true
     },
     description : {
-        type:Array,
-        required : true,
+        type:String,
     },
     thumb : {
         type:String,
     },
+    lft: {type: Number, default: 0},
+    rgt: {type: Number, default: 0},
+    parent_id: {type: Schema.Types.ObjectId, ref: 'categories'},
 },{
     timestamps : true
 })
 
-Categories.plugin(NestedSetPlugin);
+export default mongoose.model('categories',Categories);   
 
-export default mongoose.model('Categories',Categories);   
 

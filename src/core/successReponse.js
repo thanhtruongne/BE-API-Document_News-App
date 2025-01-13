@@ -1,4 +1,4 @@
-import {statusCode} from "./httpStatusCode";
+import {statusCode} from "./httpStatusCode.js";
 
 class SuccessResponse {
 
@@ -37,7 +37,7 @@ const CREATED_ATTEMP = (res, message, data, options = {}) => {
     }).send(res)
 }
 
-const REQUEST_SUCCESS = (res, message, data, options = {}) => {
+const REQUEST_CUSTOM = (res, message, data, options = {}) => {
     new Success({
         message,
         data,
@@ -47,5 +47,5 @@ const REQUEST_SUCCESS = (res, message, data, options = {}) => {
 
 export {
     CREATED_ATTEMP,
-    REQUEST_SUCCESS
+    REQUEST_CUSTOM
 }
