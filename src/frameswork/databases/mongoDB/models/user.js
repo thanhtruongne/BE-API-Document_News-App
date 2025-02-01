@@ -1,5 +1,5 @@
+import moment from "moment";
 import mongoose, { Schema } from "mongoose";
-
 let Users = new Schema({
     full_name : {
         type:String,
@@ -68,8 +68,14 @@ Users.virtual('formatCreatedAt').get(function () {
     return moment(this.createdAt).fromNow(); 
   });
   
-Users.set('toJSON', { virtuals: true });
-Users.set('toObject', { virtuals: true });
+Users.set('toJSON', { virtuals: true,transform : function (doc, ret) {
+    ret.id = ret._id; 
+    delete ret._id;  
+} });
+Users.set('toObject', { virtuals: true,transform : function (doc, ret) {
+    ret.id = ret._id; 
+    delete ret._id;  
+} });
 
 export default mongoose.model('Users',Users);   
 

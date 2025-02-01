@@ -1,5 +1,8 @@
 
 import login from "../../application/use_cases/auth/login.js";
+import logout from "../../application/use_cases/auth/logout.js";
+import profile from "../../application/use_cases/auth/profile.js";
+import refreshToken from "../../application/use_cases/auth/refreshToken.js";
 import sign_up from "../../application/use_cases/auth/sign_up.js";
 import { REQUEST_CUSTOM } from "../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../helpers/catchingAsyncAwait.aysnc.js";
@@ -23,33 +26,24 @@ class AuthController {
     }) 
     
 
-
-
-    // login_temp = catchingAsyncAwait(async(req,res)=> {
-    //     REQUEST_CUSTOM(res,'Login Successfully',await authServices.login(req.body))
-    // }) 
-
-    // sign_up_temp = catchingAsyncAwait(async(req,res) => {
-    //     CREATED_ATTEMP(res,'Created successfully',await authServices.signup(req.body))
-    // })
-
-    // logout_temp = catchingAsyncAwait(async(req,res) => {
-    //     REQUEST_CUSTOM(res,'Logout successfully',await authServices.logout(req.store),{
-    //         deleted : true
-    //     })
-    // })
+    logout = catchingAsyncAwait(async(req,res) => {
+        const response = await logout(req.store, this.userRepository)
+        REQUEST_CUSTOM(res,'Logout successfully',response)
+    })
     
-    // refreshToken = catchingAsyncAwait(async(req,res) => {
-    //     REQUEST_CUSTOM(res,'RefreshToken successfully',await authServices.refreshToken({
-    //         refreshToken : req.refreshToken,
-    //         user : req.user,
-    //         store : req.store
-    //     }))
-    // })
+    refreshToken = catchingAsyncAwait(async(req,res) => {
+        const response = await refreshToken({
+            refreshToken : req.refreshToken,
+            user : req.user,
+            store : req.store
+        }, this.userRepository)
+        REQUEST_CUSTOM(res,'RefreshToken successfully',response)
+    })
 
-    // profile_temp = catchingAsyncAwait(async(req,res) => {
-    //     REQUEST_CUSTOM(res,'Successfully',await authServices.profile(req.user))
-    // })
+    profile = catchingAsyncAwait(async(req,res) => {
+        const response = await profile(req.user,this.userRepository)
+        REQUEST_CUSTOM(res,'Profile Successfully',response)
+    })
      
 }
 

@@ -8,7 +8,7 @@ const authServicesFrame = () => {
         return  bcrypt.hashSync(password, salt);
     }
 
-    const comparePassword = (password,currentPassword) => bcrypt.compare(password, currentPassword);
+    const comparePassword = (password,currentPassword) => bcrypt.compareSync(password, currentPassword);
 
     const vertifyToken = async(tokens,keySecret) => {
         const tokensExtract = await extractToken(tokens);

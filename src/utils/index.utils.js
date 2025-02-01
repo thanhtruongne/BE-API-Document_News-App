@@ -40,7 +40,18 @@ const omit = (obj,...props) => {
     return result;
 }
 
+
+const convertObjectParams = (req) => { // truyền req query vào
+    const params = {};
+    for (const key in req.query) {
+        if (Object.prototype.hasOwnProperty.call(req.query, key)) {
+          params[key] = req.query[key];
+        }
+    }
+    return params;
+}
+
 export {
-    checkEmptyVal, checkEnable, checkPasswordValid, checkValidatePhone, convertToObject, getSelectData, isValidEmail, omit
+    checkEmptyVal, checkEnable, checkPasswordValid, checkValidatePhone, convertObjectParams, convertToObject, getSelectData, isValidEmail, omit
 };
 

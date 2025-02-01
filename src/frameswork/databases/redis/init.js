@@ -1,18 +1,13 @@
-const connectionRedis = (redis,url) => {
-    const createRedisClient = function createRedisClient() {
-        return redis.createClient(url);
-    };
-    createRedisClient().on('connect', () => {
-        console.log('Connected to Redis!');
-    });
 
-    createRedisClient().on('error', (err) => {
-        console.log(`Error  ${err}`);
-    });
 
-    return {
-        createRedisClient
-    };
+const connectionRedis = async(createClient,urlString) => {
+   const redisClient = await createClient({
+        url : urlString
+   })
+   .on('error', err => console.log('Redis Client Error', err))
+   .connect();
+   
+   return redisClient
 }
 
 

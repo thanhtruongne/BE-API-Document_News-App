@@ -1,13 +1,13 @@
 import AuthController from "../../../adapters/controllers/authController.js"
 import userRepositoriesApp from "../../../application/repositories/userRepositories.app.js"
 import authServiceApp from "../../../application/services/authService.js"
+import { authencation } from "../../../utils/auth.utils.js"
 import userRepositoryDB from "../../databases/mongoDB/repositories/userRepositoriesDB.js"
 import authServicesFrame from "../../services/authService.js"
 
 
 const authRouter = (express,redisCli) => {
     const router = express.Router()
- 
     //load depend
     const authControllerDP = new AuthController(
         userRepositoryDB,
@@ -19,8 +19,14 @@ const authRouter = (express,redisCli) => {
 
     router.post('/login',authControllerDP.login)
     router.post('/register',authControllerDP.sign_up)
+
+    router.use(authencation)
+    router.post('/logout',authControllerDP.logout)
+    router.post('/refreshToken',authControllerDP.refreshToken)
+    router.get('/profile',authControllerDP.profile)
+    
     return router
- }
+ }                                                   
  
  
  export default authRouter

@@ -2,6 +2,7 @@ import { Api401Error, Api403Error, Api404Error, BaseError, BusinessLogicError } 
 
 
 
+
 const returnError = (err, req, res, next) => {
     const statusCode = err.status || 500
     let error
@@ -14,7 +15,6 @@ const returnError = (err, req, res, next) => {
         error.errors = err.errors
     } else {
         error = {...err}
-        console.log(error,err.name,err);
         // mapping error
         if (err.name === 'CastError') error = handleCastErrorDB(err);
         if (err.code === 11000) error = handleDuplicateFieldsDB(err)

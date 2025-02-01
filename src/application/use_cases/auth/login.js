@@ -10,11 +10,11 @@ const login = async(payload,userRepository,authService) => {
         throw new Api403Error(i18n.translate("error.not_found.data"))
     }
     const user_exist = await userRepository.findByQuery({email})
-    console.log(userRepository,authService,user_exist)
+
     if(!user_exist)  
         throw new Api401Error(i18n.translate("error.user.invalid"))
-
-    if(!authService.comparePassword(password,user_exist?.password))
+    
+    if(!await authService.comparePassword(password,user_exist?.password))
             throw new BusinessLogicError(i18n.translate('errors.login_fail'))
 
     if(system && user_exist?.role != 'Admin') 

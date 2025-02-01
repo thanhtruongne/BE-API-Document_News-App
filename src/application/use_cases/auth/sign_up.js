@@ -9,7 +9,6 @@ const sign_up = async(payload,userRepository,authService) => {
     if(!validateRequestSignIn(payload)) {
         throw new Api403Error(i18n.translate("error.not_found.data"))
     }
-    console.log(payload)
     
     const user_exist = await userRepository.findByQuery({email})
     if(user_exist)  

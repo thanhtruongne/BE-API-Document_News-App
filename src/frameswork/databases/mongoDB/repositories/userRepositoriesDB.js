@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+    import crypto from 'crypto';
 import { createTokenAccessData } from '../../../../utils/auth.utils.js';
 import { omit } from "../../../../utils/index.utils.js";
 import { Api403Error } from '../../../web/plugins/error.response.js';
@@ -7,7 +7,8 @@ import userModel from "../models/user.js";
 const userRepositoryDB = () => {
 
     const findAll = async(params) => {
-        return await userModel.find(omit(params,'page','perPage'))
+        return await userModel.find(omit(params,'page','perPage','select'))
+        .select(params.select)
         .skip(params.perPage * params.page - params.perPage)
         .limit(params.perPage)
     }
@@ -15,7 +16,9 @@ const userRepositoryDB = () => {
     const findByQuery = async(query,select = {
          email : 1,phone : 2, role : 3, full_name : 4, avatar : 5, address : 6, posts : 7 ,gender : 8, dateOfBirth : 9 ,status : 10,updatedAt : 11,
          password : 12,_id: 13
-    }) => await userModel.findOne(query).select(select).lean()
+    }) => {
+        return await userModel.findOne(query).select(select).lean()
+    }
     
     const createData = async(payloadEntities) => await userModel.create({
         full_name : payloadEntities.getFullName(),
@@ -23,6 +26,8 @@ const userRepositoryDB = () => {
         password : payloadEntities.getPassword(),
         phone : payloadEntities.getPhone()
     })
+
+    const countData = async(params) => await userModel.countDocuments(omit(params,'page','perPage','select'));
     
     // for authRepo  && Keytoken
     const createKeyTokens = async(keyTokenEntities) => {
@@ -60,9 +65,20 @@ const userRepositoryDB = () => {
     }
 
     const findUserKeyTokenID = async(id) => await keyToken.findOne({user : id}).lean()
-
+    const deleteKeyTokenID = async(id) => await keyToken.deleteOne({user : id})
+    const updateRefreshTokenUsed = async(refreshTokens,tokens,keyStore) => {
+        return await keyStore.update({
+            $set: {
+                refreshToken: tokens.refreshToken
+            },
+            $addToSet: {
+                refreshTokensUsed: refreshTokens
+            }
+        })
+    }
+    
     return {
-        findAll,findByQuery,createData,createKeyTokens,findUserKeyTokenID
+        findAll,findByQuery,createData,countData,createKeyTokens,findUserKeyTokenID,deleteKeyTokenID,updateRefreshTokenUsed
     }
 
 }
