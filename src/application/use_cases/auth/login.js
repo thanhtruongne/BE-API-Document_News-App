@@ -33,7 +33,7 @@ const login = async(payload,userRepository,authService) => {
     return {
         tokens,
         data : getSelectData([
-            '_id','email','full_name','phone','role'
+            '_id'
         ],user_exist)
     }
 }

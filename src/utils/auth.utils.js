@@ -3,14 +3,14 @@ import JWT from "jsonwebtoken"
 import userRepositoriesApp from "../application/repositories/userRepositories.app.js"
 import i18n from "../config/i18n.config.js"
 import userRepositoryDB from "../frameswork/databases/mongoDB/repositories/userRepositoriesDB.js"
-import { Api401Error, Api403Error, Api404Error } from "../frameswork/web/plugins/error.response.js"
+import { Api401Error, Api403Error, Api404Error, BusinessLogicError } from "../frameswork/web/plugins/error.response.js"
 import catchingAsyncAwait from "../helpers/catchingAsyncAwait.aysnc.js"
 import { checkEmptyVal, checkPasswordValid, checkValidatePhone, isValidEmail } from './index.utils.js'
 
 
 const HEADER = {
     AUTHORIZATION: 'authorization',
-    REFRESH_TOKEN: 'refresh-token',
+    REFRESH_TOKEN: 'refreshtoken',
     X_CLIENT_ID: 'x-client-id',
     BEARER: 'Bearer'
 }
@@ -24,7 +24,7 @@ const createTokenAccessData = async(payload,publicKey,privateKey) => {
   try {
     const access_token = JWT.sign(payload,privateKey,{
         algorithm: 'RS256',
-        expiresIn : '2d'
+        expiresIn : '1d'
     })
     
     const refresh_token = JWT.sign(payload,privateKey,{
@@ -58,61 +58,74 @@ const convertPublicKeyObecjt = (publicKey) => {
     return  crypto.createPublicKey(publicKey);
 }
 
-const verifyJWT = (token, keySecret) => {
-    return  JWT.verify(token, keySecret);
+const verifyJWT = (token, keySecret, next) => {
+    try {
+        return JWT.verify(token, keySecret);
+    } catch (error) {
+        if (error instanceof JWT.TokenExpiredError) {
+            return next(new Api401Error(i18n.translate("error.token_expried")))  
+        } else if (error instanceof JWT.JsonWebTokenError) {
+            return next(new Api403Error(i18n.translate("error.refreshToken.invalid")))
+        } else {
+            return next(new BusinessLogicError(i18n.translate("error.invalid.request")))
+        }
+      
+    }
+   
 }
 
 const parseJWT = (token) => JSON.parse(Buffer?.from(token?.split('.')[1], 'base64').toString());
 
 const authencation = catchingAsyncAwait(async(req,res,next) => {
-    const clientId = req.headers[HEADER.X_CLIENT_ID]
     const userRepo = userRepositoriesApp(userRepositoryDB())
-    // const refreshToken = extractToken(req.headers[HEADER.REFRESH_TOKEN])
-    // const accessToken = extractToken(req.headers[HEADER.AUTHORIZATION])
+    const clientId = req.headers[HEADER.X_CLIENT_ID]
     const refreshToken = req.headers[HEADER.REFRESH_TOKEN]
     const accessToken = req.headers[HEADER.AUTHORIZATION]
-
-       
+    
 
     if((accessToken == 'undefined' || clientId == 'undefined')) {
         return next(new Api403Error(i18n.translate('error.not_found.data')))
     }
     const parseTokens = (accessToken === 'undefined' || accessToken == null) ? refreshToken : accessToken
-
+     
     const obj = parseJWT(parseTokens)
-    if (!obj.userID) return next(new Api403Error(i18n.translate('error.not_found.data')))
-      
+    if (!obj.userID) return next(new Api401Error(i18n.translate('error.not_found.data')))
+
     const userId = clientId || obj.userID;
     if (!userId) return next(new Api403Error(i18n.translate('error.not_found.data')))
 
     const store = await userRepo.findUserKeyTokenID(userId)
     if (!store) return next(new Api404Error(i18n.translate('error.user_id.not_found')))
-      
+    
     if (refreshToken) {
         try {
-            const decodeUser = JWT.verify(refreshToken, convertPublicKeyObecjt(store.publicKey),[{algorithms : 'RS256'}]);
+            const decodeUser = verifyJWT(refreshToken,store.publicKey,next);
+            if(!decodeUser)
+                return next(new Api401Error(i18n.translate('error.user_id.not_found')))
             if (userId !== decodeUser.userID) return next(new Api401Error(i18n.translate('error.user_id.not_found')))
-        
+     
             req.user = decodeUser
             req.store = store
             req.refreshToken = refreshToken
           
             return next()
         }  catch (error) {
-            throw error
+            return next(error)
         }
     }
 
     if (!accessToken) return next(new Api403Error(i18n.translate('error.invalid.request')))
     try { 
-        const decodeUser = verifyJWT(accessToken, store.publicKey);
-        if (userId !== decodeUser.userID) return next(new Api401Error(i18n.translate('error.user_id.not_found')))
+        const decode = verifyJWT(accessToken,store.publicKey, next); 
+        console.log(decode)
+        if (userId !== decode?.userID) 
+            return next(new Api401Error(i18n.translate('error.user_id.not_found')))
 
-        req.user = decodeUser
+        req.user = decode
         req.store = store
         return next()
     } catch (error) {
-        throw error
+        return next(error)
     }
 })
 

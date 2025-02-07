@@ -1,24 +1,24 @@
 export default function userRepositoriesApp(repository) {
     const findAll = (params) => repository.findAll(params);
-    // const countAll = (params) => repository.countAll(params);
+    const updateData = (payload,id) => repository.updateData(payload,id);
     const findByQuery = (query) => repository.findByQuery(query);
     const createData = (post) => repository.createData(post);
     const countData = (params) => repository.countData(params)
     // const updateById = (id,post) => repository.updateById(id, post);
-    // const deleteById = (id) => repository.deleteById(id);
+    const deleteResource = (id) => repository.deleteResource(id);
     //for keyTokens model users
     const createKeyTokens = (payloadEntities) => repository.createKeyTokens(payloadEntities);
     const findUserKeyTokenID = (id) => repository.findUserKeyTokenID(id);
     const deleteKeyTokenID = (id) => repository.deleteKeyTokenID(id)
-    const updateRefreshTokenUsed = async(refreshToken,tokens,keyStore) => await repository.updateRefreshTokenUsed(refreshToken,tokens,keyStore)
+    const updateRefreshTokenUsed = async(refreshToken,tokens,_id) => await repository.updateRefreshTokenUsed(refreshToken,tokens,_id)
 
     return {
         findAll,
-        // countAll,
+        updateData,
         findByQuery,
         createData,
         countData,
-        // updateById,
+        deleteResource,
         // deleteById,
         createKeyTokens,
         findUserKeyTokenID,

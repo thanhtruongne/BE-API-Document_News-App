@@ -4,6 +4,7 @@ import { Api401Error, Api403Error, Api404Error, BaseError, BusinessLogicError } 
 
 
 const returnError = (err, req, res, next) => {
+    console.log(err,'handler')
     const statusCode = err.status || 500
     let error
     if (err instanceof BaseError) {

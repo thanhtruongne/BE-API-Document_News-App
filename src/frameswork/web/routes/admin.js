@@ -16,9 +16,16 @@ const adminRouter = (express,redisCli) => {
         redisCli
     ) //  khoi tao intt voi baseController
     
-    // console.log(await redisCli,'redisCli')
     router.use([authencation,AuthencatedProvideAdmin]);
-    router.get('/get-userData-all',[catchingMiddleware(redisCli,CacheDynamic.USER_ALL_DATA)],userControllerInit.getDataAllUser)
+    // getlist
+    router.get('/user/get-userData-all',[catchingMiddleware(redisCli,CacheDynamic.USER_ALL_DATA)],userControllerInit.getDataAllUser)
+    //update
+    router.post('/user/update/:id',userControllerInit.updateUserPayload)
+    //get detail
+    router.get('/user/detail/:id',userControllerInit.getDetailUser)
+    //delete
+    router.delete('/user/delete/:id',userControllerInit.removeResource)
+
     
     return router;
  }                                                   

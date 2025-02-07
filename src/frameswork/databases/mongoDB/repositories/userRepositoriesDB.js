@@ -8,10 +8,11 @@ const userRepositoryDB = () => {
 
     const findAll = async(params) => {
         return await userModel.find(omit(params,'page','perPage','select'))
-        .select(params.select)
+        .select(params.select)  
         .skip(params.perPage * params.page - params.perPage)
         .limit(params.perPage)
-    }
+        .lean()
+    }   
 
     const findByQuery = async(query,select = {
          email : 1,phone : 2, role : 3, full_name : 4, avatar : 5, address : 6, posts : 7 ,gender : 8, dateOfBirth : 9 ,status : 10,updatedAt : 11,
@@ -20,12 +21,31 @@ const userRepositoryDB = () => {
         return await userModel.findOne(query).select(select).lean()
     }
     
+    
     const createData = async(payloadEntities) => await userModel.create({
         full_name : payloadEntities.getFullName(),
         email : payloadEntities.getEmail(),
         password : payloadEntities.getPassword(),
         phone : payloadEntities.getPhone()
     })
+
+    const updateData = async(payloadEntities,_id) => {
+        const response = await userModel.findByIdAndUpdate(_id,
+        {
+            full_name : payloadEntities.getFullName(),
+            email : payloadEntities.getEmail(),
+            phone : payloadEntities.getPhone(),
+            address : payloadEntities.getAddress(),
+            status : payloadEntities.getStatus()
+        },{
+            lean : true,
+            new : true,
+        })
+        return response;
+    }
+
+    const deleteResource = async(_id) => await userModel.findByIdAndDelete(_id)
+
 
     const countData = async(params) => await userModel.countDocuments(omit(params,'page','perPage','select'));
     
@@ -64,10 +84,10 @@ const userRepositoryDB = () => {
         }
     }
 
-    const findUserKeyTokenID = async(id) => await keyToken.findOne({user : id}).lean()
+    const findUserKeyTokenID = async(id) => await keyToken.findOne({user : id})
     const deleteKeyTokenID = async(id) => await keyToken.deleteOne({user : id})
-    const updateRefreshTokenUsed = async(refreshTokens,tokens,keyStore) => {
-        return await keyStore.update({
+    const updateRefreshTokenUsed = async( refreshTokens, tokens, _id) => {
+        return await keyToken.updateOne({_id},{
             $set: {
                 refreshToken: tokens.refreshToken
             },
@@ -78,7 +98,16 @@ const userRepositoryDB = () => {
     }
     
     return {
-        findAll,findByQuery,createData,countData,createKeyTokens,findUserKeyTokenID,deleteKeyTokenID,updateRefreshTokenUsed
+        findAll,
+        updateData,
+        findByQuery,
+        createData,
+        deleteResource,
+        countData,
+        createKeyTokens,
+        findUserKeyTokenID,
+        deleteKeyTokenID,
+        updateRefreshTokenUsed
     }
 
 }
