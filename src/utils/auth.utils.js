@@ -1,7 +1,7 @@
 import crypto from "crypto"
 import JWT from "jsonwebtoken"
 import userRepositoriesApp from "../application/repositories/userRepositories.app.js"
-import i18n from "../config/i18n.config.js"
+import i18n from "../config/i18n/i18n.config.js"
 import userRepositoryDB from "../frameswork/databases/mongoDB/repositories/userRepositoriesDB.js"
 import { Api401Error, Api403Error, Api404Error, BusinessLogicError } from "../frameswork/web/plugins/error.response.js"
 import catchingAsyncAwait from "../helpers/catchingAsyncAwait.aysnc.js"
@@ -137,13 +137,11 @@ const AuthencatedProvideAdmin = catchingAsyncAwait(async(req,res,next) => {
     if(!_id) {
         return next(new Api401Error(i18n.translate('error.user_id.not_found')))  
     }
-    debugger
     const users = await userRepo.findByQuery({
         _id, status : 'Active'
     },{
         role : 1
     })
-   
     if(users?.role == ADMIN_FEATURE.ADMIN) {
         return next();
     } else {

@@ -1,21 +1,21 @@
-const postEntities = ({
+const categoriesEntities = ({
     _id = null, 
     title = null,
+    slug = null,
     description = null ,
-    content = null ,
-    categories_id = null,
-    thumb = null,
     status = "Active",
+    parent_id = null,
 }) => {
+
     return  {
+
         getID: () => _id,
         getTitle: () => title,
+        getSlug :() => slug,
         getDescription: () => description,
-        getContent: () => content,
-        getCategoriesID: () => categories_id,
-        getThumb: () => thumb,
+        getParentID: () => parent_id,
         getStatus: () => status,
     }
 }
 
-export default postEntities
+export default categoriesEntities

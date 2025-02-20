@@ -1,4 +1,4 @@
-import i18n from '../../../config/i18n.config.js';
+import i18n from '../../../config/i18n/i18n.config.js';
 import keyTokenEntities from '../../../entities/keyToken.js';
 import userEntities from '../../../entities/user.js';
 import { Api401Error, Api403Error } from '../../../frameswork/web/plugins/error.response.js';

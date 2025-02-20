@@ -12,13 +12,15 @@ const userRepositoryDB = () => {
         .skip(params.perPage * params.page - params.perPage)
         .limit(params.perPage)
         .lean()
+        .exec()
+
     }   
 
     const findByQuery = async(query,select = {
          email : 1,phone : 2, role : 3, full_name : 4, avatar : 5, address : 6, posts : 7 ,gender : 8, dateOfBirth : 9 ,status : 10,updatedAt : 11,
          password : 12,_id: 13
     }) => {
-        return await userModel.findOne(query).select(select).lean()
+        return await userModel.findOne(query).select(select).lean().exec();
     }
     
     
@@ -26,7 +28,10 @@ const userRepositoryDB = () => {
         full_name : payloadEntities.getFullName(),
         email : payloadEntities.getEmail(),
         password : payloadEntities.getPassword(),
-        phone : payloadEntities.getPhone()
+        phone : payloadEntities.getPhone(),
+        avatar : payloadEntities.getAvatar(),
+        address : payloadEntities.getAddress(),
+        status : payloadEntities.getStatus(),
     })
 
     const updateData = async(payloadEntities,_id) => {

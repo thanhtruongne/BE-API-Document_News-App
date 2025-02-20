@@ -1,5 +1,9 @@
 import _ from 'lodash';
+import { Types } from 'mongoose';
+import slugify from 'slugify';
 import validator from 'validator';
+
+
 
 
 const getSelectData = (fields = [] , obj = {}) => {
@@ -34,6 +38,10 @@ const convertToObject = id => {
     return new Types.ObjectId(id)
 }
 
+const convertStringSlug = (string) => {
+  return slugify(string,{lower : true,strict: true});
+}
+
 const omit = (obj,...props) => {
     const result = { ...obj };
     props.forEach((prop) => delete result[prop]);
@@ -52,6 +60,15 @@ const convertObjectParams = (req) => { // truyền req query vào
 }
 
 export {
-    checkEmptyVal, checkEnable, checkPasswordValid, checkValidatePhone, convertObjectParams, convertToObject, getSelectData, isValidEmail, omit
+    checkEmptyVal,
+    checkEnable,
+    checkPasswordValid,
+    checkValidatePhone,
+    convertObjectParams,
+    convertStringSlug,
+    convertToObject,
+    getSelectData,
+    isValidEmail,
+    omit
 };
 

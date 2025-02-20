@@ -1,10 +1,11 @@
-import moment from "moment";
 import mongoose, { Schema } from "mongoose";
+import { convertStringSlug } from "../../../../utils/index.utils.js";
 
 let Posts = new Schema({
     title : {
         type:String,
-        required : true
+        required : true,
+        index : true
     },   
     slug : {
         type:String,
@@ -22,6 +23,7 @@ let Posts = new Schema({
     },
     description : {
         type:String,
+        default : null
     },
     categories_id : {
        type : mongoose.Types.ObjectId,
@@ -35,17 +37,8 @@ let Posts = new Schema({
     },
     viewed : {
         type: Number,
-    },
-    comment : [
-        {
-            like :{type : Number},
-            guest : {type : String},
-            createAt : {type : String,default: moment().format('MMMM Do YYYY, h:mm:ss a')},
-            postedBy :{type :mongoose.Types.ObjectId ,  ref:'Users'},
-            comment : {type :String},
-            // report
-        }
-    ],
+    },  
+    comment : [{  type : mongoose.Types.ObjectId, ref : 'Comment', index : true}],
     user_id : {
        type : mongoose.Types.ObjectId,
        ref : 'Users'
@@ -55,6 +48,20 @@ let Posts = new Schema({
     timestamps : true
 })
 
+
+Posts.pre('save', async function(next) {
+    this.slug = convertStringSlug(this.title);
+    const check_exist_slug = await mongoose.model('Posts')
+        .findOne({slug : this.slug})
+        .select('slug')
+        .lean()
+        .exec()
+    if(check_exist_slug)
+        return next(new Api403Error(i18n.translate('error.categories.slug_unique')))
+    this.slug = this.slug + '-' + Math.floor(Math.random() * 1000000)
+    next();
+
+})
 
 
 export default mongoose.model('Posts',Posts);   

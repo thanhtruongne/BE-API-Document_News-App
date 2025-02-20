@@ -5,7 +5,9 @@ import countData from "../../../application/use_cases/admins/users/countData.js"
 import getAllUser from "../../../application/use_cases/admins/users/getAllUser.js";
 import getDetailUserById from '../../../application/use_cases/admins/users/getDetailUserById.js';
 import removeUser from '../../../application/use_cases/admins/users/removeUser.js';
+import storeUser from '../../../application/use_cases/admins/users/storeUser.js';
 import updateData from '../../../application/use_cases/admins/users/updateData.js';
+import { uploadResourceSingle } from '../../../config/cloudinary/uploadResource.js';
 import { catchingData } from "../../../frameswork/databases/redis/cachingRepo.js";
 import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
@@ -16,20 +18,16 @@ import BaseController from "./baseController.js";
 
 class userController extends BaseController {
    constructor(userRepository,authService,redisClient){
-      super(userRepository,authService,redisClient)
+      super({userRepository,authService,redisClient})
    }
     getDataAllUser = catchingAsyncAwait(async(req,res,next) => {
-        const params = {};
-        for (const key in req.query) {
-            if (Object.prototype.hasOwnProperty.call(req.query, key)) {
-              params[key] = req.query[key];
-            }
-        }
-        // set tạm  =>  nên dùng seek Paging
-        params.page = params.page ? parseInt(params.page, 10) : 1;
-        params.perPage = params.perPage ? parseInt(params.perPage, 10) : 10;
+        const params = this.convertParamsObject(req.query);
+
         params.select = '-password -updatedAt'
-         
+        
+        params.role = { $ne : 'Admin' } 
+
+
         const data = await getAllUser(params,this.userRepository)
         let countAll = await countData(params,this.userRepository)
 
@@ -56,7 +54,7 @@ class userController extends BaseController {
                 }
                 ,this.redisClient)
         }
-      
+        
         
         REQUEST_CUSTOM(res,'Successfully',response, options) 
 
@@ -64,6 +62,7 @@ class userController extends BaseController {
 
     updateUserPayload = catchingAsyncAwait(async(req,res,next) => {
         const { id } = req.params
+        // const {avatar}
         const payload = req.body
         const response = await updateData(payload,id,this.userRepository)
         REQUEST_CUSTOM(res,'Update Success',response) 
@@ -81,6 +80,16 @@ class userController extends BaseController {
         const response = await removeUser(id,this.userRepository);
         REQUEST_CUSTOM(res,'Delete success',response) 
     })
+
+    createResource = catchingAsyncAwait(async(req,res,next) => {
+        const payload = req.body
+        const avatar = req.file
+        const { secure_url } = await uploadResourceSingle(avatar)
+        payload.avatar = secure_url;
+        const response = await storeUser(payload,this.userRepository,this.authService);
+        REQUEST_CUSTOM(res,'Tạo thành công',response) 
+    })
+        
     
      
 }

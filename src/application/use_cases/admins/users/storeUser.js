@@ -3,11 +3,8 @@ import userEntities from "../../../../entities/user.js";
 import { Api403Error, Api404Error } from "../../../../frameswork/web/plugins/error.response.js";
 import { checkEmptyVal, isValidEmail } from "../../../../utils/index.utils.js";
 
-const updateData = async(payloadEntities,id,userRepository) => {
-    const {email, address, phone, full_name, status } = payloadEntities
-    
-    if(!id) 
-        throw new Api403Error(i18n.translate("error.not_found.data"))
+const storeUser = async(payloadEntities,userRepository,authService) => {
+    const {email, address, phone, password, full_name, status , avatar } = payloadEntities
     
     if(checkEmptyVal(email) || checkEmptyVal(address) || checkEmptyVal(phone) || checkEmptyVal(full_name) || checkEmptyVal(status))
         throw new Api403Error(i18n.translate("error.not_found.data"))
@@ -16,23 +13,24 @@ const updateData = async(payloadEntities,id,userRepository) => {
         throw new Api403Error(i18n.translate('error.Invalid.email'));
 
     //check nếu email đổi trùng qua user khác
-    const email_unique = await userRepository.findByQuery({
-        email , _id : {$ne : id}
-    })
+    const email_unique = await userRepository.findByQuery({email},{email : 1})
+
     if(email_unique)
         throw new Api404Error(i18n.translate('errors.email_was_exists'));
 
+    const passwordHash = await authService.hashPassword(password)
+
     const dataEntities = userEntities({
-        email,address,phone,full_name,status
+        email,address,phone,password : passwordHash, full_name,status,avatar
     })
 
-    const response = await userRepository.updateData(dataEntities,id);
+    const response = await userRepository.createData(dataEntities);
 
     return response;
 }
 
 
-export default updateData;
+export default storeUser;
 
 
 

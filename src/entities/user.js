@@ -6,7 +6,8 @@ const userEntities = ({
     phone = null,
     address = null,
     status = "Active",
-    password = null
+    password = null,
+    avatar = null,
 }) => {
 
     return  {
@@ -19,6 +20,7 @@ const userEntities = ({
         getAddress: () => address,
         getStatus: () => status,
         getPassword: () => password,
+        getAvatar: () => avatar,
     }
 }
 

@@ -1,4 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import i18n from "../../../../config/i18n/i18n.config.js";
+import { convertStringSlug } from "../../../../utils/index.utils.js";
+import { Api403Error } from "../../../web/plugins/error.response.js";
 
 const Categories = new Schema({
     title : {
@@ -12,16 +15,37 @@ const Categories = new Schema({
     },
     description : {
         type:String,
+        default : null
     },
-    thumb : {
+    status : {
         type:String,
+        enum: ['Block', 'Active'],
+        default : 'Active'
     },
-    lft: {type: Number, default: 0},
-    rgt: {type: Number, default: 0},
-    parent_id: {type: Schema.Types.ObjectId, ref: 'categories'},
+    // thumb : {
+    //     type:String,
+    //     default : null
+    // },
+    parent_id: {type: Schema.Types.ObjectId, ref: 'categories', default : null},
 },{
     timestamps : true
 })
+
+
+Categories.pre('save', async function(next) {
+    this.slug = convertStringSlug(this.title);
+    const check_exist_slug = await mongoose.model('categories')
+        .findOne({slug : this.slug})
+        .select('slug')
+        .lean()
+        .exec()
+    if(check_exist_slug)
+        return next(new Api403Error(i18n.translate('error.categories.slug_unique')))
+
+    next();
+
+})
+
 
 export default mongoose.model('categories',Categories);   
 

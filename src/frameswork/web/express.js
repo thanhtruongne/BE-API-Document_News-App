@@ -3,7 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import i18n from '../../config/i18n.config.js';
+import i18n from '../../config/i18n/i18n.config.js';
 
 
 const ConfigureExpress = (app) => {
@@ -34,8 +34,8 @@ const ConfigureExpress = (app) => {
         policy: "no-referrer",
     }))
     
-    app.use(express.json({limit: '10kb'}));
-    app.use(express.urlencoded({extended: true, limit: '10kb'}));
+    app.use(express.json({limit: '50mb'}));
+    app.use(express.urlencoded({extended: true, limit: '50mb'}));
     app.use(cookieParser());
 
 

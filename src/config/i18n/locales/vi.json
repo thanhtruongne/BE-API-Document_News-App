@@ -15,8 +15,10 @@
     "error.not_found.data" : "Dữ liệu không hợp lệ hoặc bị lỗi",
     "error.token_expried" : "Token không hợp lệ hoặc hết hạn",
     "error.user_id.not_found" : "Dữ liệu user không tìm thấy hoặc lỗi",
+    "error.invalid.id.not_found" : "Dữ liệu chính không tìm thấy hoặc lỗi",
     "error.invalid.request" : "Đường truyền dữ liệu lỗi",
     "key.nestedset.parent.not_found" : "Dữ liệu parent không tìm thấy",
-    "error.refreshToken.invalid" : "Token không hợp lệ hoặc đã vô hiệu hóa"
-
+    "error.refreshToken.invalid" : "Token không hợp lệ hoặc đã vô hiệu hóa",
+    "error.categories.slug_unique" : "Title hoặc slug không được trùng !",
+    "error.exists.children" : "Dữ liệu con còn tồn tại !"
 }
