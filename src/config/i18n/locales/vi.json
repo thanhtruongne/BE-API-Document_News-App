@@ -20,5 +20,6 @@
     "key.nestedset.parent.not_found" : "Dữ liệu parent không tìm thấy",
     "error.refreshToken.invalid" : "Token không hợp lệ hoặc đã vô hiệu hóa",
     "error.categories.slug_unique" : "Title hoặc slug không được trùng !",
-    "error.exists.children" : "Dữ liệu con còn tồn tại !"
+    "error.exists.children" : "Dữ liệu con còn tồn tại !",
+     "error.invalid.file.readStream" : "Dữ liệu file stream không tòn tại hoặc lỗi"
 }

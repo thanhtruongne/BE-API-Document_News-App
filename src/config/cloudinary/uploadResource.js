@@ -13,7 +13,6 @@ const uploadResourceSingle = (file) => {
             else
             reject(error)
         })
-        // khi resovle thành cọng thì strem lên cloudinay and upload
         streamifier.createReadStream(file?.buffer).pipe(response)
   })
 

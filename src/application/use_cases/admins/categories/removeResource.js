@@ -7,7 +7,6 @@ const removeResource = async(id,categoriesRepository) => {
         throw new Api403Error(i18n.translate('error.invalid.id.not_found'))
     let children_exists = await categoriesRepository.findByQuery({parent_id : convertToObject(id)})
     
-    console.log(children_exists,'children_exists')
     if(children_exists && children_exists?.length > 0)
         throw new Api403Error(i18n.translate('error.exists.children'))
     

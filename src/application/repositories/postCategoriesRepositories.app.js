@@ -1,9 +1,11 @@
 export default function postCategoriesRepositoriesapp(repository) {
     const createResource = (payload) => repository.createResource(payload);
     
-    // const getTreeData = (parentID) => repository.fetchAllDataTree(parentID)
+    const findAll = (params) => repository.fetchAllData(params)
 
-    // const changeStatus = (_id,status) => repository.changeStatus(_id,status)
+    const countAll = (params) => repository.fetchCountAll(params)
+
+    const searchingData = (_id,status) => repository.changeStatus(_id,status)
 
     // const removeResource = (_id) => repository.removeResource(_id)
 
@@ -13,6 +15,8 @@ export default function postCategoriesRepositoriesapp(repository) {
 
     return {
         createResource,
+        findAll,
+        countAll
         // getTreeData,
         // changeStatus,
         // removeResource,

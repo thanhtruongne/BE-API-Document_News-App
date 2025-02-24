@@ -12,8 +12,6 @@ const createData = async(payloadEntities,categoriesRepository) => {
     const dataEntities = categoriesEntities({
         title,description,parent_id,status
     })
-
-    console.log(categoriesRepository)
     const response = await categoriesRepository.createResource(dataEntities);
 
     return response;

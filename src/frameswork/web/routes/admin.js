@@ -65,8 +65,9 @@ const adminRouter = (express,redisCli) => {
       redisCli
     )
 
-    router.post('/post/store',uploadData.single('avatar'),postControllerInit.createResource);
-
+    router.post('/post/store',uploadData.single('thumb'),postControllerInit.createResource);
+    router.get('/post/getData',[catchingMiddleware(redisCli,CacheDynamic.POST_ALL_DATA)],postControllerInit.getDataResource);
+    router.post('/post/searchingData',[catchingMiddleware(redisCli,CacheDynamic.POST_SEARCHING_DATA_FORM)],postControllerInit.searchingDataEngineer)
 
     return router;
  }                                                   

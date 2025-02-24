@@ -8,12 +8,12 @@ import removeUser from '../../../application/use_cases/admins/users/removeUser.j
 import storeUser from '../../../application/use_cases/admins/users/storeUser.js';
 import updateData from '../../../application/use_cases/admins/users/updateData.js';
 import { uploadResourceSingle } from '../../../config/cloudinary/uploadResource.js';
-import { catchingData } from "../../../frameswork/databases/redis/cachingRepo.js";
 import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
 import CacheDynamic from '../../../utils/constants.js';
 import { omit } from '../../../utils/index.utils.js';
-import BaseController from "./baseController.js";
+import BaseController from "./BaseController.js";
+
 
 
 class userController extends BaseController {
@@ -21,12 +21,12 @@ class userController extends BaseController {
       super({userRepository,authService,redisClient})
    }
     getDataAllUser = catchingAsyncAwait(async(req,res,next) => {
-        const params = this.convertParamsObject(req.query);
 
+        const params = this.convertParamsObject(req.query);
+          
         params.select = '-password -updatedAt'
         
         params.role = { $ne : 'Admin' } 
-
 
         const data = await getAllUser(params,this.userRepository)
         let countAll = await countData(params,this.userRepository)
@@ -45,14 +45,13 @@ class userController extends BaseController {
         }
         // cache bằng redis
         if(response && response.length != 0) {
-            let stringKey = querystring.stringify(omit(params,'select')) || ' '
-            catchingData(
-                {
-                    key : CacheDynamic.USER_ALL_DATA + '_' +  stringKey,
-                    value : JSON.stringify({response,options}),
-                    expire : 60 * 480 // 8tieng
-                }
-                ,this.redisClient)
+            let stringKey = querystring.stringify(omit(params,'select','perPage','role')) || ' '
+            this.redisClient.setnx(
+                CacheDynamic.USER_ALL_DATA + '_' +  stringKey,
+                JSON.stringify({response,options}),
+                60 * 480
+             )// 8tieng
+
         }
         
         

@@ -14,7 +14,6 @@ class BaseController {
               params[key] = query[key];
             }
         }
-        //custom tùy yêu cầu
         params.page = params.page ? parseInt(params.page, 10) : 1;
         params.perPage = params.perPage ? parseInt(params.perPage, 10) : 10;
         

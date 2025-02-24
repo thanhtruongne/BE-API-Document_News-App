@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import http from 'http';
+import moment from "moment";
 import mongoose from 'mongoose';
-import { createClient } from "redis";
 import connectionInit from './src/frameswork/databases/mongoDB/init.js';
-import connectionRedis from './src/frameswork/databases/redis/init.js';
+import RedisUtilsRepo from './src/frameswork/databases/redis/redis.repo.js';
 import ConfigureExpress from './src/frameswork/web/express.js';
 import { returnError } from './src/frameswork/web/middlewares/errorHandler.js';
 import initRoutes from './src/frameswork/web/routes/index.js';
@@ -12,9 +12,11 @@ import serverConfig from './src/frameswork/web/server.js';
 import CronJobInit from './src/tasks/schedule.js';
 dotenv.config();
 const urlConnectMongo = process.env.MONGOOSE_URL
-const urlConnectRedis = process.env.REDIS_URL
 const app = express();
 const server = http.createServer(app)
+moment.locale('vi')
+
+
 
 //config express 
 ConfigureExpress(app)
@@ -26,12 +28,13 @@ serverConfig(app,server,mongoose).startServer()
 connectionInit(mongoose,urlConnectMongo).connectToMongo()
 
 //init redis
-const redisClient = await connectionRedis(createClient,urlConnectRedis)
+// const redisClient = await connectionRedis(createClient,urlConnectRedis)
 //init route
-initRoutes(app,express,redisClient)
+
+initRoutes(app,express,RedisUtilsRepo)
 
 //init cron jobs
-CronJobInit(redisClient)
+CronJobInit(RedisUtilsRepo)
 
 app.use(returnError)
 

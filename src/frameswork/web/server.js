@@ -38,7 +38,6 @@ const serverConfig = (app,server,mongoose) => {
       }
     
       function startServer() {
-        console.log(process.env.PORT)
         createTerminus(server, {
           logger: console.log,
           signal: 'SIGINT',

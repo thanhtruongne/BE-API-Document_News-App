@@ -6,8 +6,6 @@ const refreshToken = async({refreshToken,user,store},userRepository) => {
     if(store.refreshTokensUsed.includes(refreshToken)) {
         throw new Api403Error(i18n.translate("error.refreshToken.invalid"))
     }
-    console.log(store)
-
     if(refreshToken != store.refreshToken) throw new Api403Error(i18n.translate("error.refreshToken.invalid"))
 
     const user_exists = await userRepository.findByQuery({email, _id: userID,status :"Active"})

@@ -9,12 +9,12 @@ let Posts = new Schema({
     },   
     slug : {
         type:String,
-        required:true,
+        // required:true,
         uniqe:true,
         lowercase:true
     },
     content : {
-        type:Array,
+        type: String,
         required : true,
     },
     thumb : {

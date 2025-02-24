@@ -1,8 +1,9 @@
-
+import { omit } from "../../../../utils/index.utils.js"
+import posts from "../models/posts.js"
 const postRepositoriesDB = () => {
 
     const createResource = async(payloadEntities) => {
-        return await postsq .create({
+        return await posts.create({
             title : payloadEntities.getTitle(),
             description : payloadEntities.getDescription(),
             content : payloadEntities.getContent(),
@@ -10,6 +11,29 @@ const postRepositoriesDB = () => {
             status : payloadEntities.getStatus(),
             categories_id : payloadEntities.getCategoriesID(),
         })
+    }
+
+    const fetchAllData = async(params) => {
+        return await posts.find(omit(params,'page','perPage','select'))
+        .select(params.select)  
+        .skip(params.perPage * params.page - params.perPage)
+        .limit(params.perPage)
+        .populate({
+            path : "categories_id",
+            select : "title _id parent_id",
+        })
+        .lean()
+        .exec()
+
+    }
+
+
+    const fetchCountAll = async(params) => {
+       return await posts.countDocuments(omit(params,'page','perPage','select'));
+    }
+
+    const searchingData = async(payload) => {
+
     }
 
 
@@ -65,6 +89,9 @@ const postRepositoriesDB = () => {
 
     return {
         createResource,
+        fetchAllData,
+        fetchCountAll,
+        searchingData
         // findByQueryCate,
         // fetchAll,
         // fetchAllDataTree,

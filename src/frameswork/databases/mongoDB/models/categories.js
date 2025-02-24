@@ -47,6 +47,6 @@ Categories.pre('save', async function(next) {
 })
 
 
-export default mongoose.model('categories',Categories);   
+export default mongoose.model('Categories',Categories);   
 
 
