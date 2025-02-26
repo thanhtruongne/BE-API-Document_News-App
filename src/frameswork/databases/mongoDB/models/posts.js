@@ -1,17 +1,23 @@
 import mongoose, { Schema } from "mongoose";
+import { generateImageURL } from "../../../../config/cloudinary/uploadResource.js";
 import { convertStringSlug } from "../../../../utils/index.utils.js";
 
 let Posts = new Schema({
     title : {
         type:String,
         required : true,
-        index : true
     },   
     slug : {
         type:String,
         // required:true,
         uniqe:true,
         lowercase:true
+    },
+    type : {
+        require : true,
+        type : Number,
+        comment: '1 là Tin post , 2 là Góc nhìn , 3 là Podcast, 4 là Thể thao ,  5 là Video',
+        default : 1
     },
     content : {
         type: String,
@@ -20,6 +26,14 @@ let Posts = new Schema({
     thumb : {
         type:String,
         required:true,
+    },
+    images : [
+        {type : String, require : false}
+    ],
+    isTrending : {
+        type : Boolean,
+        default : false,
+        comment : "Lưu nếu theo dạng trending"
     },
     description : {
         type:String,
@@ -48,6 +62,20 @@ let Posts = new Schema({
     timestamps : true
 })
 
+Posts.index({title : 'text'})
+
+Posts.virtual('imageURL').get(function(){
+    if (!this.thumb) return null;
+    return generateImageURL(this.thumb);
+})
+
+Posts.virtual('multipleImageURL').get(function(){
+    if (!this.images || this.images[0] == null) return [];
+    return this.images.map((item) => generateImageURL(item))
+})
+
+
+Posts.set('toJSON', { virtuals: true });
 
 Posts.pre('save', async function(next) {
     this.slug = convertStringSlug(this.title);
@@ -62,6 +90,7 @@ Posts.pre('save', async function(next) {
     next();
 
 })
+
 
 
 export default mongoose.model('Posts',Posts);   

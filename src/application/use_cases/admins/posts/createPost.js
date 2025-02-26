@@ -3,13 +3,13 @@ import postEntities from "../../../../entities/post.js";
 import { Api403Error } from "../../../../frameswork/web/plugins/error.response.js";
 import { checkEmptyVal } from "../../../../utils/index.utils.js";
 const createDataResourcePost = async(payloadEntities,postRepository) => {
-    const {title , description, content, status,categories_id, thumb } = payloadEntities
-    
+    const {title , description, content, status,categories_id, thumb, images, isTrending } = payloadEntities
+    console.log(payloadEntities)
     if(checkEmptyVal(title) || checkEmptyVal(status) || checkEmptyVal(categories_id) || checkEmptyVal(thumb) || checkEmptyVal(content))
         throw new Api403Error(i18n.translate("error.not_found.data"))
 
     const dataEntities = postEntities({
-        title,description,categories_id,status,content,thumb
+        title,description,categories_id,status,content,thumb,images, isTrending
     })
 
     const response = await postRepository.createResource(dataEntities);

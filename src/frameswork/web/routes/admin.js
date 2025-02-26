@@ -5,6 +5,7 @@ import categoriesRepositoriesApp from "../../../application/repositories/categor
 import postCategoriesRepositoriesapp from "../../../application/repositories/postCategoriesRepositories.app.js"
 import userRepositoriesApp from "../../../application/repositories/userRepositories.app.js"
 import authServiceApp from "../../../application/services/authService.js"
+import postServiceApp from "../../../application/services/postServiceApp.js"
 import uploadData from "../../../config/cloudinary/multer.js"
 import { AuthencatedProvideAdmin, authencation } from "../../../utils/auth.utils.js"
 import CacheDynamic from '../../../utils/constants.js'
@@ -12,7 +13,10 @@ import categoriesRepositoriesDB from "../../databases/mongoDB/repositories/categ
 import postRepositoriesDB from "../../databases/mongoDB/repositories/postRepositoriesDB.js"
 import userRepositoryDB from "../../databases/mongoDB/repositories/userRepositoriesDB.js"
 import authServicesFrame from "../../services/authService.js"
-import catchingMiddleware from '../middlewares/redisCatching.middleware.js'
+import postService from "../../services/postService.js"
+import { CatchingCategoryData, CatchingRenderData } from "../middlewares/redis/index.js"
+
+
 const adminRouter = (express,redisCli) => {
     const router = express.Router()  
 
@@ -29,7 +33,7 @@ const adminRouter = (express,redisCli) => {
 
     //User Routes
     // getlist
-    router.get('/user/get-userData-all',[catchingMiddleware(redisCli,CacheDynamic.USER_ALL_DATA)],userControllerInit.getDataAllUser)
+    router.get('/user/get-userData-all',[CatchingRenderData(redisCli,CacheDynamic.USER_ALL_DATA)],userControllerInit.getDataAllUser)
     //create
     router.post('/user/store',uploadData.single('avatar'),userControllerInit.createResource)
     //update
@@ -52,7 +56,7 @@ const adminRouter = (express,redisCli) => {
 
     // router.get('/categories/getAll',categoriesControllerInit.getTreeData)
      
-    router.get('/categories/treeData',categoriesControllerInit.getTreeData)
+    router.get('/categories/treeData',[CatchingCategoryData(redisCli,CacheDynamic.DATA_TREE_FORM_CATE)],categoriesControllerInit.getTreeData)
 
     router.post('/categories/changeStatus',categoriesControllerInit.changeStatus)
 
@@ -61,13 +65,21 @@ const adminRouter = (express,redisCli) => {
     router.delete('/categories/remove/:id',categoriesControllerInit.removeResource)
 
     const postControllerInit = new postController(
-      postCategoriesRepositoriesapp(postRepositoriesDB()),
-      redisCli
+         postCategoriesRepositoriesapp(postRepositoriesDB()),
+         redisCli,
+         postServiceApp(postService())
     )
+ 
+    router.post('/post/store',uploadData.fields([{name : "thumb" , maxCount : 1} , {name : "images", maxCount: 10}]),postControllerInit.createResource);
+    router.get('/post/detail/:id',postControllerInit.getDetailResource)
+    router.get('/post/getData',[CatchingRenderData(redisCli,CacheDynamic.POST_ALL_DATA)],postControllerInit.getDataResource);
+    router.post('/post/searchingData',postControllerInit.searchingDataEngineer)
+    router.put('/post/update/:id',postControllerInit.updateDataResource)
 
-    router.post('/post/store',uploadData.single('thumb'),postControllerInit.createResource);
-    router.get('/post/getData',[catchingMiddleware(redisCli,CacheDynamic.POST_ALL_DATA)],postControllerInit.getDataResource);
-    router.post('/post/searchingData',[catchingMiddleware(redisCli,CacheDynamic.POST_SEARCHING_DATA_FORM)],postControllerInit.searchingDataEngineer)
+
+
+
+
 
     return router;
  }                                                   

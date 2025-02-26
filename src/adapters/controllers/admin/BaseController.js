@@ -1,10 +1,12 @@
 class BaseController {
-    constructor({userRepository,authService,redisClient,categoriesRepository,postCategory}){
+    constructor({userRepository,authService,redisClient,categoriesRepository,postCategory,postService}){
         this.userRepository =  userRepository;
         this.authService =  authService    
         this.redisClient = redisClient;
         this.categoriesRepository = categoriesRepository;
+        
         this.postCategory = postCategory;
+        this.postService = postService
     }
 
     convertParamsObject(query) {

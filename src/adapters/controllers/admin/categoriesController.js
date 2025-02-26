@@ -5,8 +5,8 @@ import getDetailData from "../../../application/use_cases/admins/categories/getD
 import removeResource from "../../../application/use_cases/admins/categories/removeResource.js";
 import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
+import CacheDynamic from '../../../utils/constants.js';
 import BaseController from "./BaseController.js";
-
 
 
 class categoriesController extends BaseController {
@@ -21,7 +21,15 @@ class categoriesController extends BaseController {
     })
 
     getTreeData = catchingAsyncAwait(async(req,res,next) => {
-        const response = await getDataTree(null,this.categoriesRepository)
+        const {id} = req.query    
+        const response = await getDataTree(id,this.categoriesRepository)
+        if(response && response?.length > 0 && id == null) {
+            this.redisClient.setnx(
+                CacheDynamic.DATA_TREE_FORM_CATE,
+                JSON.stringify(response),
+                60 * 480
+            )
+        }
         
         REQUEST_CUSTOM(res,'Get dataTree thành công',response) 
     })

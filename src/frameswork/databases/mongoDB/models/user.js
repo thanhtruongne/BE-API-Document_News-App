@@ -66,7 +66,7 @@ let Users = new Schema({
 
 Users.virtual('formatCreatedAt').get(function () {
     return moment(this.createdAt).fromNow(); 
-  });
+});
   
 Users.set('toJSON', { virtuals: true,transform : function (doc, ret) {
     ret.id = ret._id; 

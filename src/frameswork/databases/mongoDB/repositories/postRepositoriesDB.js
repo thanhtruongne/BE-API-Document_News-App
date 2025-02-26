@@ -10,6 +10,8 @@ const postRepositoriesDB = () => {
             thumb : payloadEntities.getThumb(),
             status : payloadEntities.getStatus(),
             categories_id : payloadEntities.getCategoriesID(),
+            images : payloadEntities.getImages(),
+            isTrending : payloadEntities.getIsTrending()
         })
     }
 
@@ -32,8 +34,14 @@ const postRepositoriesDB = () => {
        return await posts.countDocuments(omit(params,'page','perPage','select'));
     }
 
-    const searchingData = async(payload) => {
+    const findDetail = async(query) => {
+        return await posts.find(query)
+    }
 
+    const findById = async(_id) => {
+        return await posts.findById(_id)
+        // .lean()
+        .exec();
     }
 
 
@@ -91,7 +99,8 @@ const postRepositoriesDB = () => {
         createResource,
         fetchAllData,
         fetchCountAll,
-        searchingData
+        findDetail,
+        findById
         // findByQueryCate,
         // fetchAll,
         // fetchAllDataTree,

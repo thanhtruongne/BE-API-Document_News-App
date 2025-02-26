@@ -5,6 +5,8 @@ const postEntities = ({
     content = null ,
     categories_id = null,
     thumb = null,
+    images = null,
+    isTrending = false,
     status = "Active",
 }) => {
     return  {
@@ -14,6 +16,8 @@ const postEntities = ({
         getContent: () => content,
         getCategoriesID: () => categories_id,
         getThumb: () => thumb,
+        getIsTrending : () => isTrending,
+        getImages : () => images,
         getStatus: () => status,
     }
 }
