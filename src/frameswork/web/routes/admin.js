@@ -1,6 +1,8 @@
+import authorController from "../../../adapters/controllers/admin/authorController.js"
 import categoriesController from "../../../adapters/controllers/admin/categoriesController.js"
 import postController from "../../../adapters/controllers/admin/postController.js"
 import userController from "../../../adapters/controllers/admin/userController.js"
+import authorRepositoriesApp from "../../../application/repositories/authorRepositories.app.js"
 import categoriesRepositoriesApp from "../../../application/repositories/categoriesRepositories.app.js"
 import postCategoriesRepositoriesapp from "../../../application/repositories/postCategoriesRepositories.app.js"
 import userRepositoriesApp from "../../../application/repositories/userRepositories.app.js"
@@ -9,6 +11,7 @@ import postServiceApp from "../../../application/services/postServiceApp.js"
 import uploadData from "../../../config/cloudinary/multer.js"
 import { AuthencatedProvideAdmin, authencation } from "../../../utils/auth.utils.js"
 import CacheDynamic from '../../../utils/constants.js'
+import auhthorRepositoriesDB from "../../databases/mongoDB/repositories/auhthorRepositoriesDB.js"
 import categoriesRepositoriesDB from "../../databases/mongoDB/repositories/categoriesRepositoriesDB.js"
 import postRepositoriesDB from "../../databases/mongoDB/repositories/postRepositoriesDB.js"
 import userRepositoryDB from "../../databases/mongoDB/repositories/userRepositoriesDB.js"
@@ -77,9 +80,18 @@ const adminRouter = (express,redisCli) => {
     router.put('/post/update/:id',postControllerInit.updateDataResource)
 
 
+    // CRUD authors, roleAuthor
+    const authorControllerInit = new authorController(
+       authorRepositoriesApp(auhthorRepositoriesDB()),
+       redisCli
+    )
 
-
-
+    router.post('/author/store',uploadData.single('avatar'),authorControllerInit.createResource)
+    router.get('/author/getData',authorControllerInit.getDataResourceAuthor)
+    //roleAuthor
+    router.post('/author/roles/store',authorControllerInit.craeteResourceRoleAuthor)
+    router.get('/author/roles/getData',authorControllerInit.getDataRoleAuthor)
+    router.get('/author/roles/detail/:id',authorControllerInit.getDataByQueryID)
 
     return router;
  }                                                   

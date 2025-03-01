@@ -43,15 +43,11 @@ class RedisUtilsRepo {
     
     static async decrby(key, count){
         try {
-            const res = await instanceRedis.incr(key);
+            const res = await instanceRedis.decrby(key,count);
             return res
         } catch (error) {
             throw  error
         }   
-            instanceRedis.decrby(key, count, (err, result) => {
-                if (err) return reject(err);
-                resolve(result);
-        });
     }
     
     // expire key redis

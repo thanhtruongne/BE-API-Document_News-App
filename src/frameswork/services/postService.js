@@ -11,7 +11,7 @@ const postService = () => {
             //generate publicID
             const response = await uploadResourceSingle(file);
             return response;
-        } catch (error) {
+        } catch (error) {   
             console.log(error);
             throw new BusinessLogicError(error?.message || "Some thing went wrong")
         }

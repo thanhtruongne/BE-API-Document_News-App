@@ -11,7 +11,7 @@ const uploadResourceSingle = (file) => {
             folder : "BlogApp"
         }, (error,result) => {
             if(result)
-                resovle(result)
+                resovle(result.public_id)
             else
             reject(error)
         })
@@ -41,6 +41,10 @@ const uploadMultipleResource = (files) => {
 
 const generateImageURL =(public_id) => {
    try {
+    console.log(public_id)
+      if(!public_id || public_id == undefined) {
+         return null;
+      }
       const response = cloudinary.url(public_id,{secure : true});
       return response
    } catch (error) {

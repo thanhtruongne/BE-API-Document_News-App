@@ -9,7 +9,6 @@ let Posts = new Schema({
     },   
     slug : {
         type:String,
-        // required:true,
         uniqe:true,
         lowercase:true
     },
@@ -70,8 +69,11 @@ Posts.virtual('imageURL').get(function(){
 })
 
 Posts.virtual('multipleImageURL').get(function(){
-    if (!this.images || this.images[0] == null) return [];
-    return this.images.map((item) => generateImageURL(item))
+    if (!this.images || this.images[0] == 'undefined') return [];
+    return this.images.map((item) => {
+        if(item)
+            return generateImageURL(item)
+    })
 })
 
 
@@ -86,6 +88,7 @@ Posts.pre('save', async function(next) {
         .exec()
     if(check_exist_slug)
         return next(new Api403Error(i18n.translate('error.categories.slug_unique')))
+    
     this.slug = this.slug + '-' + Math.floor(Math.random() * 1000000)
     next();
 

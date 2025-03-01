@@ -22,10 +22,6 @@ const Categories = new Schema({
         enum: ['Block', 'Active'],
         default : 'Active'
     },
-    // thumb : {
-    //     type:String,
-    //     default : null
-    // },
     parent_id: {type: Schema.Types.ObjectId, ref: 'categories', default : null},
 },{
     timestamps : true
@@ -33,14 +29,26 @@ const Categories = new Schema({
 
 
 Categories.pre('save', async function(next) {
-    this.slug = convertStringSlug(this.title);
-    const check_exist_slug = await mongoose.model('categories')
+   const check_exist_slug = await mongoose.model('Categories')
         .findOne({slug : this.slug})
         .select('slug')
         .lean()
         .exec()
     if(check_exist_slug)
         return next(new Api403Error(i18n.translate('error.categories.slug_unique')))
+
+    this.slug = convertStringSlug(this.title);
+
+    if(this.parent_id != null) {
+        let find_parent = await  mongoose.model('Categories')
+        .findOne({_id : this.parent_id})
+        .select('slug')
+        .lean()
+        .exec()
+
+        this.slug =  '/'  + find_parent.slug + '/' + this.slug
+    }
+
 
     next();
 
