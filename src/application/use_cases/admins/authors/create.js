@@ -16,7 +16,8 @@ const createDataAuthor = async(payloadEntities,authorRepository) => {
         description,
         role_id,
         status,
-        avatar : public_id_thumb
+        avatar : public_id_thumb,
+        
     })
 
     const response = await authorRepository.createResourceAuthor(dataEntities);

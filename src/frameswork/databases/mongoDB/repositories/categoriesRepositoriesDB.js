@@ -22,6 +22,7 @@ const categoriesRepositoriesDB = () => {
     }
 
 
+
     const fetchAll = async(params) => {
         return await categoriesModel.find(omit(params,'page','perPage'))
         .skip(params.perPage * params.page - params.perPage)
@@ -42,6 +43,10 @@ const categoriesRepositoriesDB = () => {
            children : await fetchAllDataTree(item.value)
         })))
 
+    }
+
+    const findByQueryAndUpdateMany = async(query,payload) => {
+        return await categoriesModel.updateMany(query ,{ $set :payload })
     }
 
     const changeStatus = async(_id,status) => {
@@ -72,6 +77,7 @@ const categoriesRepositoriesDB = () => {
         fetchAllDataTree,
         changeStatus,
         removeResource,
+        findByQueryAndUpdateMany,
         findByQuery,
         getDetailResource
     }

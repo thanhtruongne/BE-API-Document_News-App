@@ -4,8 +4,11 @@ import { Api403Error } from "../../../../frameswork/web/plugins/error.response.j
 const changeStatus = async(_id,status,categoriesRepository) => {
     if(!_id) 
         throw new Api403Error(i18n.translate('error.invalid.id.not_found'))
-        let statusData = status ? 'Active' : "Block";
-
+    let statusData = status ? 'Active' : "Block";
+    
+    //nếu change thg parent thì child change theo lun
+    await categoriesRepository.findByQueryAndUpdateMany({parent_id : _id},{status : statusData})
+    
     return await categoriesRepository.changeStatus(_id,statusData)
 }
 export default changeStatus;

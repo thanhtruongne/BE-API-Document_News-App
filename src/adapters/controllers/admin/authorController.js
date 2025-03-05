@@ -1,6 +1,8 @@
+import changeStatusAuthor from "../../../application/use_cases/admins/authors/changeStatus.js";
 import countAllDataAuthor from "../../../application/use_cases/admins/authors/countAll.js";
 import createDataAuthor from "../../../application/use_cases/admins/authors/create.js";
 import getAllDataAuthor from "../../../application/use_cases/admins/authors/getDataAll.js";
+import getDetailAuthorData from "../../../application/use_cases/admins/authors/getDetail.js";
 import countAllDataRoleAuthor from "../../../application/use_cases/admins/authors/roles/countAll.js";
 import createDataRoleAuthor from "../../../application/use_cases/admins/authors/roles/createData.js";
 import getAllDataRoleAuthor from "../../../application/use_cases/admins/authors/roles/getData.js";
@@ -18,14 +20,16 @@ class authorController extends BaseController {
     createResource = catchingAsyncAwait(async(req,res,next) => {
         const payload = req.body;
         const avatar  = req.file; payload.avatar = avatar
-        console.log(payload,'payload');
+       
         const response = await createDataAuthor(payload,this.authorRepository)
         REQUEST_CUSTOM(res,'Create resource successfully',response) 
     })
 
     getDataResourceAuthor = catchingAsyncAwait(async(req,res,next) => {
         const params = this.convertParamsObject(req.query);
-
+        // console.log()
+        params.select = params.select ??  '-description -updatedAt -createdAt'
+        
         const response = await getAllDataAuthor(params,this.authorRepository)
         const countData = await countAllDataAuthor(params,this.authorRepository);
      
@@ -40,6 +44,16 @@ class authorController extends BaseController {
     })
 
 
+    getDetailAuthorData = catchingAsyncAwait(async(req,res,next) => {
+        const {id} = req.params
+      
+        const response = await getDetailAuthorData(id,this.authorRepository)
+        REQUEST_CUSTOM(res,'Get detail resource successfully',response) 
+    })
+
+
+
+    //role author
     craeteResourceRoleAuthor = catchingAsyncAwait(async(req,res,next) => {
         const payload = req.body;
         const response = await createDataRoleAuthor(payload,this.authorRepository)
@@ -82,6 +96,13 @@ class authorController extends BaseController {
        const response = await getDetailRoleAuthorByID(id,this.authorRepository)
        REQUEST_CUSTOM(res,'Get detail data success',response,options) 
     })
+
+
+    changeStatusAuthorResource = catchingAsyncAwait(async(req,res,next) => {
+        const payload = req.body;
+        const response = await changeStatusAuthor(payload,this.authorRepository)
+        REQUEST_CUSTOM(res,'Change status success',response) 
+     })
 
 
 

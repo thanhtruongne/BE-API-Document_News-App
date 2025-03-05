@@ -13,6 +13,8 @@ const connectionInit = (mongoose,url) => {
       console.log('DB connection error');
       throw new Error(err);
     });
+
+    return  mongoose;
   }
 
   mongoose.connection.on('connected', () => {

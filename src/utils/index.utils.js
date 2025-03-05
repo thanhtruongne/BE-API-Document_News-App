@@ -19,6 +19,8 @@ const isValidEmail = (email) => {
 }
 
 const checkEmptyVal = (field) => {
+    if(!field)
+         return true
    return validator.isEmpty(field);
 }
 

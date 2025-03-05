@@ -1,4 +1,5 @@
 import { omit } from "../../../../utils/index.utils.js";
+import ModelInstance from "../DymanicModel.js";
 import authors from "../models/authors.js";
 import role from "../models/role.js";
 
@@ -31,6 +32,9 @@ const auhthorRepositoriesDB = () => {
     const countAllDataAuthor = async(params) => await authors.countDocuments(omit(params,'page','select','perPage'))
 
 
+    const findRoleAuthorByQueryID = (id) => {
+        return authors.findById(id).lean().exec();
+    }
 
 
 
@@ -56,14 +60,26 @@ const auhthorRepositoriesDB = () => {
         return role.find(query).lean().exec();
     }
 
+
+    const changeStatus = async(payload) => {
+        let modelInstance = await ModelInstance.getModel(payload.modelName)
+        return await modelInstance.findByIdAndUpdate({_id : payload.id},{status : payload.status},{
+            runValidators : true,
+            new : true,
+            select : '_id status'
+        })
+    }
+
     return {
         createResourceAuthor,
         getAllDataAuthor,
         countAllDataAuthor,
+        changeStatus,
         createResourceRoleAuthor,
         getAllDataRoleAuthor,
         countAllDataRoleAuthor,
-        findRoleAuthorByQuery
+        findRoleAuthorByQuery,
+        findRoleAuthorByQueryID
     }
 }
 

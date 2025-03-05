@@ -73,11 +73,11 @@ const adminRouter = (express,redisCli) => {
          postServiceApp(postService())
     )
  
-    router.post('/post/store',uploadData.fields([{name : "thumb" , maxCount : 1} , {name : "images", maxCount: 10}]),postControllerInit.createResource);
+    router.post('/post/store',uploadData.fields([{name : "thumb" , maxCount : 1} , {name : "images", maxCount: 10},{name : "videos", maxCount : 1}]),postControllerInit.createResource);
     router.get('/post/detail/:id',postControllerInit.getDetailResource)
-    router.get('/post/getData',[CatchingRenderData(redisCli,CacheDynamic.POST_ALL_DATA)],postControllerInit.getDataResource);
-    router.post('/post/searchingData',postControllerInit.searchingDataEngineer)
-    router.put('/post/update/:id',postControllerInit.updateDataResource)
+    router.post('/post/getData',[CatchingRenderData(redisCli,CacheDynamic.POST_ALL_DATA)],postControllerInit.getDataResource);
+    // router.post('/post/searchingData',postControllerInit.searchingDataEngineer)
+    router.put('/post/update/:id',uploadData.fields([{name : "thumb" , maxCount : 1} , {name : "images", maxCount: 10},{name : "videos", maxCount : 1}]),postControllerInit.updateDataResource)
 
 
     // CRUD authors, roleAuthor
@@ -88,10 +88,14 @@ const adminRouter = (express,redisCli) => {
 
     router.post('/author/store',uploadData.single('avatar'),authorControllerInit.createResource)
     router.get('/author/getData',authorControllerInit.getDataResourceAuthor)
+    router.get('/author/get-detail/:id',authorControllerInit.getDetailAuthorData)
     //roleAuthor
     router.post('/author/roles/store',authorControllerInit.craeteResourceRoleAuthor)
     router.get('/author/roles/getData',authorControllerInit.getDataRoleAuthor)
     router.get('/author/roles/detail/:id',authorControllerInit.getDataByQueryID)
+
+
+    router.put('/author/changeStatus',authorControllerInit.changeStatusAuthorResource)
 
     return router;
  }                                                   

@@ -5,9 +5,13 @@ const postEntities = ({
     content = null ,
     categories_id = null,
     thumb = null,
+    videos = null,
     images = null,
     isTrending = false,
     status = "Active",
+    type = null,
+    media_type = 1,
+    author_id = null
 }) => {
     return  {
         getID: () => _id,
@@ -18,7 +22,11 @@ const postEntities = ({
         getThumb: () => thumb,
         getIsTrending : () => isTrending,
         getImages : () => images,
+        getVideos : () => videos,
+        getMediaType : () => media_type,
+        getType: () => type,
         getStatus: () => status,
+        getAuhtorID: () => author_id,
     }
 }
 

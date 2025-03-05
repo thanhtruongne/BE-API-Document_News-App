@@ -11,8 +11,12 @@ const postRepositoriesDB = () => {
             status : payloadEntities.getStatus(),
             categories_id : payloadEntities.getCategoriesID(),
             images : payloadEntities.getImages(),
-            isTrending : payloadEntities.getIsTrending()
-        })
+            isTrending : payloadEntities.getIsTrending(),
+            type : payloadEntities.getType(),
+            author_id : payloadEntities.getAuhtorID() ?? null,
+            videos : payloadEntities.getVideos() ?? null,
+            media_type : payloadEntities.getMediaType()
+        })  
     }
 
     const fetchAllData = async(params) => {
@@ -20,10 +24,16 @@ const postRepositoriesDB = () => {
         .select(params.select)  
         .skip(params.perPage * params.page - params.perPage)
         .limit(params.perPage)
-        .populate({
-            path : "categories_id",
-            select : "title _id parent_id",
-        })
+        .populate([ 
+            {
+                path : "categories_id",
+                select : "title _id parent_id",
+            },
+            {
+                path : "author_id",
+                select : "_id full_name"
+            }
+        ])
         .lean()
         .exec()
 
@@ -35,7 +45,17 @@ const postRepositoriesDB = () => {
     }
 
     const findDetail = async(query) => {
-        return await posts.find(query)
+        return await posts.find(query).populate([ 
+            {
+                path : "categories_id",
+                select : "title _id parent_id",
+            },
+            {
+                path : "author_id",
+                select : "_id full_name"
+            }
+        ]).lean().exec()
+
     }
 
     const findById = async(_id) => {
@@ -44,70 +64,33 @@ const postRepositoriesDB = () => {
         .exec();
     }
 
-
-    // const findByQueryCate = async(_id,select = {
-    //     title : 1 , description : 2 , status : 3, parent_id : 4 , slug : 5
-    // }) => {
-    //     return await categoriesModel.findById(_id).select(select).lean().exec()
-    // }
-
-
-    // const fetchAll = async(params) => {
-    //     return await categoriesModel.find(omit(params,'page','perPage'))
-    //     .skip(params.perPage * params.page - params.perPage)
-    //     .limit(params.perPage)
-    //     .lean()
-    //     .exec()
-    // }
-
-
-    // const fetchAllDataTree = async(parent_id = null) => {
-    //     const data =  await categoriesModel.find({parent_id}).select('slug _id parent_id title status')
-    //     .lean()
-    //     .exec()
-    //     .then(res => res.map(({_id,...item},index) => ({ value: _id,key : index , ...item })));
-
-    //     return Promise.all(data.map(async(item) => ({
-    //        ...item,
-    //        children : await fetchAllDataTree(item.value)
-    //     })))
-
-    // }
-
-    // const changeStatus = async(_id,status) => {
-    //     return await categoriesModel.findByIdAndUpdate({_id},{status},{
-    //         runValidators : true,
-    //         new : true,
-    //         select : '_id status'
-    //     })
-    // }
-
-    // const getDetailResource = async(_id) => {
-    //     return await categoriesModel.findById({_id}).lean().exec();
-    // }
-
-    // const removeResource = async(_id) => {
-    //     return await categoriesModel.findByIdAndDelete({_id})
-    // }
-
-    // const findByQuery = async(query) => {
-    //     return await categoriesModel.find(query).lean().exec()
-    // }
-
+    const findByIDandUpdate = async(_id,payload) => {
+        const data = {
+            title : payload.getTitle(),
+            description : payload.getDescription(),
+            categories_id : payload.getCategoriesID(),
+            status : payload.getStatus(),
+            content : payload.getContent(),
+            thumb : payload.getThumb(),
+            images : payload.getImages(),
+            isTrending : payload.getIsTrending(),
+            author_id : payload.getAuhtorID(),
+            type : payload.getType(),
+        }
+        return await posts.findByIdAndUpdate(_id,{$set : data},{
+            runValidators : true,   
+            new : true
+        })
+    }
 
     return {
         createResource,
         fetchAllData,
         fetchCountAll,
         findDetail,
-        findById
-        // findByQueryCate,
-        // fetchAll,
-        // fetchAllDataTree,
-        // changeStatus,
-        // removeResource,
-        // findByQuery,
-        // getDetailResource
+        findById,
+        findByIDandUpdate
+
     }
 }
 

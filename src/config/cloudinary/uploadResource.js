@@ -42,7 +42,7 @@ const uploadMultipleResource = (files) => {
 const generateImageURL =(public_id) => {
    try {
     console.log(public_id)
-      if(!public_id || public_id == undefined) {
+      if(!public_id || public_id == undefined || public_id == 'undefined') {
          return null;
       }
       const response = cloudinary.url(public_id,{secure : true});
@@ -51,16 +51,57 @@ const generateImageURL =(public_id) => {
         throw new BusinessLogicError(error.message);
    }
 }
-
-
-const destroyImageURL = async(public_id) => {
+const generateVideoURL = (public_id) => {
     try {
-       const response = await cloudinary.uploader.destroy(public_id);
+       if(!public_id || public_id == undefined || public_id == 'undefined') {
+          return null;
+       }
+       const response = cloudinary.url(public_id, {
+          resource_type: "video",
+          format: "mp4",
+          secure : true
+       });
+
        return response
     } catch (error) {
          throw new BusinessLogicError(error.message);
     }
  }
 
-export { destroyImageURL, generateImageURL, uploadMultipleResource, uploadResourceSingle }
+const destroyCloudinaryURL = async(public_id) => {
+    try {
+       const response = await cloudinary.uploader.destroy(public_id);
+       return response
+    } catch (error) {
+         throw new BusinessLogicError(error.message);
+    }
+}
+
+
+
+const uploadVideoResource = (file) => {
+    return new Promise((resovle,reject) => {
+        console.log(file)
+        if (!file || !file.buffer) {
+            return reject(new Error("File buffer is undefined"));
+        }
+        const response = cloudinary.uploader.upload_stream({
+            folder : "BlogApp/Videos",
+            format : 'mp4',
+            resource_type : 'video',
+            transformation : [
+                { width: 1080, height: 720, crop: "limit" }, 
+                { quality: "auto" }
+            ]
+        }, (error,result) => {
+            if(result)
+                resovle(result.public_id)
+            else
+            reject(error)
+        })
+        streamifier.createReadStream(file?.buffer).pipe(response)
+  })
+}
+
+export { destroyCloudinaryURL, generateImageURL, generateVideoURL, uploadMultipleResource, uploadResourceSingle, uploadVideoResource }
 

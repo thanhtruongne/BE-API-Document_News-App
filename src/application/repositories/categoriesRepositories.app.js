@@ -11,8 +11,11 @@ export default function categoriesRepositoriesApp(repository) {
 
     const getDetailResource = (_id) => repository.getDetailResource(_id)
 
+    const findByQueryAndUpdateMany = (query,payload) => repository.findByQueryAndUpdateMany(query,payload)
+
     return {
         createResource,
+        findByQueryAndUpdateMany,
         getTreeData,
         changeStatus,
         removeResource,

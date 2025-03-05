@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { generateImageURL } from "../../../../config/cloudinary/uploadResource.js";
+import { generateImageURL, generateVideoURL } from "../../../../config/cloudinary/uploadResource.js";
 import { convertStringSlug } from "../../../../utils/index.utils.js";
 
 let Posts = new Schema({
@@ -18,6 +18,13 @@ let Posts = new Schema({
         comment: '1 là Tin post , 2 là Góc nhìn , 3 là Podcast, 4 là Thể thao ,  5 là Video',
         default : 1
     },
+    media_type : {
+        require : true,
+        type : Number,
+        comment: '1 là Bài viết , 2 là Video , 3 là Chủ đề, 4 là ảnh',
+        default : 1
+    },
+    author_id : { type : mongoose.Types.ObjectId, ref : 'authors', index : true , default : null},
     content : {
         type: String,
         required : true,
@@ -25,6 +32,11 @@ let Posts = new Schema({
     thumb : {
         type:String,
         required:true,
+    },
+    videos : {
+        type: String,
+        required: false,
+        default: null
     },
     images : [
         {type : String, require : false}
@@ -75,6 +87,11 @@ Posts.virtual('multipleImageURL').get(function(){
             return generateImageURL(item)
     })
 })
+Posts.virtual('videoURL').get(function(){
+    if (!this.videos) return null;
+    return generateVideoURL(this.videos);
+})
+    
 
 
 Posts.set('toJSON', { virtuals: true });
