@@ -5,7 +5,7 @@ import getDetailData from "../../../application/use_cases/admins/categories/getD
 import removeResource from "../../../application/use_cases/admins/categories/removeResource.js";
 import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
-import BaseController from "./BaseController.js";
+import BaseController from "../BaseController.js";
 
 
 class categoriesController extends BaseController {

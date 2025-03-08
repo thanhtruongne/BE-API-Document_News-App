@@ -9,7 +9,7 @@ import getAllDataRoleAuthor from "../../../application/use_cases/admins/authors/
 import getDetailRoleAuthorByID from "../../../application/use_cases/admins/authors/roles/getDetail.js";
 import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
-import BaseController from "./BaseController.js";
+import BaseController from "../BaseController.js";
 
 
 class authorController extends BaseController {

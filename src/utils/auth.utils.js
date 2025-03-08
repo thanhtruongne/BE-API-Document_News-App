@@ -24,7 +24,7 @@ const createTokenAccessData = async(payload,publicKey,privateKey) => {
   try {
     const access_token = JWT.sign(payload,privateKey,{
         algorithm: 'RS256',
-        expiresIn : '1d'
+        expiresIn : '2d'
     })
     
     const refresh_token = JWT.sign(payload,privateKey,{
@@ -60,7 +60,8 @@ const convertPublicKeyObecjt = (publicKey) => {
 
 const verifyJWT = (token, keySecret, next) => {
     try {
-        return JWT.verify(token, keySecret);
+
+        return JWT.verify(token, keySecret,{algorithms : 'RS256'});
     } catch (error) {
         if (error instanceof JWT.TokenExpiredError) {
             return next(new Api401Error(i18n.translate("error.token_expried")))  
@@ -96,7 +97,7 @@ const authencation = catchingAsyncAwait(async(req,res,next) => {
 
     const store = await userRepo.findUserKeyTokenID(userId)
     if (!store) return next(new Api404Error(i18n.translate('error.user_id.not_found')))
-    
+    console.log(refreshToken,store,accessToken)
     if (refreshToken) {
         try {
             const decodeUser = verifyJWT(refreshToken,store.publicKey,next);

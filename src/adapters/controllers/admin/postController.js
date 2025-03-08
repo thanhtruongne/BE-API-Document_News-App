@@ -8,7 +8,7 @@ import updateDataResource from "../../../application/use_cases/admins/posts/upda
 import { generateImageURL } from "../../../config/cloudinary/uploadResource.js";
 import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
-import BaseController from "./BaseController.js";
+import BaseController from "../BaseController.js";
 
 
 
