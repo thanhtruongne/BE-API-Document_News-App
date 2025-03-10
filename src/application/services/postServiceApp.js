@@ -7,7 +7,7 @@ const postServiceApp = (postService) => {
 
     const searchingParamsService = async(payload) => await postService.searchingParamsService(payload)
 
-    const updateVideos = async(public_id,files) => await  postService.updateVideos(public_id,files)
+    const updateVideos = async(public_id,files) => await postService.updateVideos(public_id,files)
     return {
         updateImage,
         updateMultipleImages,

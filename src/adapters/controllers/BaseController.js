@@ -1,10 +1,22 @@
 class BaseController {
-    constructor({userRepository,authService,redisClient,categoriesRepository,postCategory,postService,authorRepository}){
+    constructor({
+        userRepository,
+        authService,
+        redisClient,
+        categoriesRepository,
+        postCategory,
+        postService,
+        authorRepository,
+        settingRepository,
+        //fe
+        generalRepository,
+        generalService
+    }){
         this.userRepository =  userRepository;
         this.authService =  authService    
         this.redisClient = redisClient;
         this.categoriesRepository = categoriesRepository;
-        
+        this.settingRepository = settingRepository
         this.authorRepository = authorRepository
         this.postCategory = postCategory;
         this.postService = postService

@@ -12,7 +12,7 @@ import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.j
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
 import CacheDynamic from '../../../utils/constants.js';
 import { omit } from '../../../utils/index.utils.js';
-import BaseController from "./BaseController.js";
+import BaseController from "../BaseController.js";
 
 
 
