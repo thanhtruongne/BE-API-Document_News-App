@@ -45,7 +45,7 @@ const postService = () => {
     }
 
     const searchingParamsService = async(payload) => {
-        const { categories_id, text , createdAt,author_id, status } = payload;
+        const { categories_id, text , createdAt,author_id, status , page } = payload;
         if(createdAt) {
             createdAt.gte =  moment(createdAt?.gte, 'DD-MM-YYYY').toDate() ?? null;    
             if(createdAt.lte) {
@@ -68,6 +68,8 @@ const postService = () => {
         if(author_id && author_id?.length > 0 ) {
             queryStr.author_id = {$in : author_id};
         }
+        if(page) 
+            queryStr.page = page;
         return {...queryStr}
     }
  

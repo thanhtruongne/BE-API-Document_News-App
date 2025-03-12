@@ -31,7 +31,7 @@ const connectionInit = (mongoose,url) => {
   });
 
   mongoose.connection.on('disconnected', () => {
-    console.error(
+    console.error(  
       `MongoDB disconnected! Reconnecting in ${
         options.reconnectInterval / 1000
       }s...`

@@ -13,26 +13,27 @@ import BaseController from "../BaseController.js";
 
 
 class postController extends BaseController {
-    constructor(postCategory,redisClient,postService){
-        super({postCategory,redisClient,postService})
+    constructor(postRepository,redisClient,postService){
+        super({postRepository,redisClient,postService})
     }
 
     createResource = catchingAsyncAwait(async(req,res,next) => {
         const payload = req.body;
         const files = req.files
-        const response = await createDataResourcePost(payload,files,this.postCategory)
+        const response = await createDataResourcePost(payload,files,this.postRepository,this.routerRepository)
         REQUEST_CUSTOM(res,'Tạo bài viết thành công',response) 
     })
 
 
 
     getDataResource = catchingAsyncAwait(async(req,res,next) => {
-        const payload = req.body;
+        let { page } = req.body;
         const params = this.convertParamsObject(req.query);
+
         params.select = '-content -description -slug -comment'
 
-        const data = await getData(payload,params,this.postCategory,this.postService)
-        let countAllData = await countAll(params,payload,this.postCategory,this.postService)
+        const data = await getData(req,params,this.postRepository,this.postService)
+        let countAllData = await countAll(params,req,this.postRepository,this.postService)
 
         //thêm trg key để access theo lib fe
         const response  = data.map((item,key) => {
@@ -44,10 +45,12 @@ class postController extends BaseController {
         })
 
         const options = {
+            page : page ?? params.page,
             totalItems : countAllData,
             totalPages : Math.ceil(countAllData / params.perPage),
             itemsPerPage :  params.perPage,
         }
+        console.log(options,'options')
 
         // Cache
         // if(response && response.length != 0) {
@@ -66,9 +69,9 @@ class postController extends BaseController {
     //     const payload = req.body;
     //     const params = this.convertParamsObject(req.query);
         
-    //     const data = await searchingDataPost(payload,this.postCategory,this.postService)
+    //     const data = await searchingDataPost(payload,this.postRepository,this.postService)
 
-    //     let countAllData = await countAll(this.postService.searchingParamsService(payload),this.postCategory)
+    //     let countAllData = await countAll(this.postService.searchingParamsService(payload),this.postRepository)
 
     //     const response  = data.map((item,key) => {
     //         item.timeMoment = moment(item.createdAt).format("HH:mm DD-MM-YYYY");
@@ -92,7 +95,7 @@ class postController extends BaseController {
     getDetailResource = catchingAsyncAwait(async(req,res,next) => {
         const {id} = req.params;
         console.log(id,'id')
-        const response = await getDetailResourceBlog(id,this.postCategory)
+        const response = await getDetailResourceBlog(id,this.postRepository)
         REQUEST_CUSTOM(res,'Get detail success',response) 
     })
 
@@ -100,7 +103,7 @@ class postController extends BaseController {
         const {id} = req.params;
         const payload = req.body
         const files = req.files
-        const response = await updateDataResource(id,payload,files,this.postCategory,this.postService)
+        const response = await updateDataResource(id,payload,files,this.postRepository,this.postService,this.routerRepository)
         REQUEST_CUSTOM(res,'Get detail success',response) 
     })
     

@@ -2,7 +2,7 @@ import i18n from "../../../../config/i18n/i18n.config.js";
 import postEntities from "../../../../entities/post.js";
 import { Api403Error, BusinessLogicError } from "../../../../frameswork/web/plugins/error.response.js";
 import { checkEmptyVal } from "../../../../utils/index.utils.js";
-const updateDataResource = async(id,payloadEntities,files,postRepository,postService) => {
+const updateDataResource = async(id,payloadEntities,files,postRepository,postService,routerRepository) => {
     const {title , description, content, status,categories_id, images, isTrending , type , media_type ,author_id } = payloadEntities
     console.log(payloadEntities,'payloadEntities')
     if(checkEmptyVal(title) || checkEmptyVal(status) || checkEmptyVal(categories_id)|| checkEmptyVal(content) || !id)
@@ -43,7 +43,18 @@ const updateDataResource = async(id,payloadEntities,files,postRepository,postSer
         media_type : media_type ?? already_post.media_type
     })
 
+
+
     const response = await postRepository.findByIDandUpdate(id,dataEntities);
+
+    if(response && title === already_post?.title) {
+        await this.routerRepository.updateDataRouter({
+            model_id : id,
+            model_name : title,
+            model_title : title,
+            slug : response?.slug
+        })
+    }
 
     return response;
 }

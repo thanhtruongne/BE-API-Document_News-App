@@ -1,9 +1,10 @@
 import { uploadMultipleResource, uploadResourceSingle, uploadVideoResource } from "../../../../config/cloudinary/uploadResource.js";
 import i18n from "../../../../config/i18n/i18n.config.js";
 import postEntities from "../../../../entities/post.js";
+import routerEntities from "../../../../entities/routers.js";
 import { Api403Error } from "../../../../frameswork/web/plugins/error.response.js";
 import { checkEmptyVal } from "../../../../utils/index.utils.js";
-const createDataResourcePost = async(payloadEntities,files,postRepository) => {
+const createDataResourcePost = async(payloadEntities,files,postRepository,routerRepository) => {
     const {title , description, content, status,categories_id, isTrending, type, author_id, media_type } = payloadEntities
      
     if(checkEmptyVal(title) || checkEmptyVal(status) || checkEmptyVal(categories_id) || checkEmptyVal(content))
@@ -14,7 +15,6 @@ const createDataResourcePost = async(payloadEntities,files,postRepository) => {
     }
 
     let objectHash = {};
-    console.log(payloadEntities,'payloadEntities',files)
 
     if(files && files.images) {
         const imagesResponse = await uploadMultipleResource(files.images);
@@ -48,6 +48,16 @@ const createDataResourcePost = async(payloadEntities,files,postRepository) => {
     })
 
     const response = await postRepository.createResource(dataEntities);
+    console.log(routerRepository,'routerRepository')
+    if(response) {
+        const dataRouterEntities = routerEntities({
+            model_name :response?.constructor.modelName,
+            model_id : response._id,
+            model_title : response.title,
+            slug : response.slug,
+        })
+        await routerRepository.createRouterResource(dataRouterEntities)
+    }
 
     return response;
 }

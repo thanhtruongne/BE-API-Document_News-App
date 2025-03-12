@@ -1,6 +1,7 @@
 import { convertObjectParams } from "../../../../utils/index.utils.js   ";
 
-const countAll = async(params,payload,postRepository,postService) =>  {
+const countAll = async(params,req,postRepository,postService) =>  {
+    const payload = req.body
     const query = await postService.searchingParamsService(payload)
 
     const params_query = convertObjectParams(params)

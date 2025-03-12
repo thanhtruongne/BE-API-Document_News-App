@@ -20,7 +20,7 @@ const postRepositoriesDB = () => {
     }
 
     const fetchAllData = async(params) => {
-        return await posts.find(omit(params,'page','perPage','select'))
+        return await posts.find(omit(params,'page','perPage','select','sort'))
         .select(params.select)  
         .skip(params.perPage * params.page - params.perPage)
         .limit(params.perPage)
@@ -34,6 +34,7 @@ const postRepositoriesDB = () => {
                 select : "_id full_name"
             }
         ])
+        .sort(params?.sort)
         .lean()
         .exec()
 
