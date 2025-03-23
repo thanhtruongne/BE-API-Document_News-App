@@ -15,7 +15,7 @@ let Posts = new Schema({
     type : {
         require : true,
         type : Number,
-        comment: '1 là Tin post , 2 là Góc nhìn , 3 là Podcast, 4 là Thể thao ,  5 là Video',
+        comment: '1 là Tin post , 2 là Infographic , 3 là Podcast, 4 là Thể thao ,  5 là Video',
         default : 1
     },
     media_type : {
@@ -31,11 +31,11 @@ let Posts = new Schema({
     },
     thumb : {
         type:String,
-        required:true,
+        // required:true,
     },
     videos : {
         type: String,
-        required: false,
+        required: false,    
         default: null
     },
     images : [
@@ -62,6 +62,7 @@ let Posts = new Schema({
     },
     viewed : {
         type: Number,
+        default : 0
     },  
     comment : [{  type : mongoose.Types.ObjectId, ref : 'Comment', index : true}],
     user_id : {

@@ -59,7 +59,7 @@ const adminRouter = (express,redisCli) => {
 
     //Categories Routes
     router.post('/categories/store',categoriesControllerInit.createResource)
-
+    router.put('/categories/update/:id',categoriesControllerInit.updateResource)
     // router.get('/categories/getAll',categoriesControllerInit.getTreeData)
      
     router.get('/categories/treeData',[CatchingCategoryData(redisCli,CacheDynamic.DATA_TREE_FORM_CATE)],categoriesControllerInit.getTreeData)

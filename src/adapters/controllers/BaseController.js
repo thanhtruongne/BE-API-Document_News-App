@@ -1,16 +1,16 @@
+import routerRepositoriesApp from "../../application/repositories/routerRepositories.app.js";
+import routerRepositoriesDB from "../../frameswork/databases/mongoDB/repositories/routerRepositoriesDB.js";
+
 class BaseController {
     constructor({
         userRepository,
         authService,
         redisClient,
         categoriesRepository,
-        postCategory,
+        postRepository,
         postService,
         authorRepository,
         settingRepository,
-        //fe
-        generalRepository,
-        generalService
     }){
         this.userRepository =  userRepository;
         this.authService =  authService    
@@ -18,8 +18,9 @@ class BaseController {
         this.categoriesRepository = categoriesRepository;
         this.settingRepository = settingRepository
         this.authorRepository = authorRepository
-        this.postCategory = postCategory;
-        this.postService = postService
+        this.postRepository = postRepository;
+        this.postService = postService;
+        this.routerRepository = routerRepositoriesApp(routerRepositoriesDB());
     }
 
     convertParamsObject(query) {

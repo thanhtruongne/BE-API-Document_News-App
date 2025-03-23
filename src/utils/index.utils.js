@@ -63,16 +63,73 @@ const convertObjectParams = (query) => {
     return params;
 }
 
+const getValuesFromTree = (nodes,number = null) => {
+    let result = [];
+    let resultName = [];
+    let slug = [];
+    let object_value = [];
+    let object_value_name = []
+    nodes.forEach((node,index) => {
+        if(number && index > number) {
+          return result
+        }
+        if(node.slug && node.slug.includes('goc-nhin')){
+            object_value_name = [node.slug]
+        }
+        
+        let values = [ node.value ]; 
+        let name_value = [node.title];
+        let slug_name = [node.slug];
+        if (node.children && node.children.length > 0) {
+          const childValues = getValuesFromTree(node.children, number);
+          values = values.concat(childValues.result.flat());
+          name_value = name_value.concat(childValues.name.flat());
+          slug_name = slug_name.concat(childValues.slug.flat()); 
+        }
+    
+        result.push(values.flat()); 
+        slug.push(slug_name.flat())
+        resultName.push(name_value.flat())
+    });
+    return {
+      result,
+      slug,
+      name : resultName
+    }
+  };
+
+
+  const formatDateViWithTimezone = (isoString) => {
+    // Tạo date object
+    const date = new Date(isoString);
+    
+
+    const vietnamTime = new Date(date.getTime() + (7 * 60 * 60 * 1000));
+    
+    const weekdays = [
+      'Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 
+      'Thứ năm', 'Thứ sáu', 'Thứ bảy'
+    ];
+    
+    const day = vietnamTime.getUTCDate();
+    const month = vietnamTime.getUTCMonth() + 1;
+    const year = vietnamTime.getUTCFullYear();
+    const hours = vietnamTime.getUTCHours().toString().padStart(2, '0');
+    const minutes = vietnamTime.getUTCMinutes().toString().padStart(2, '0');
+    const weekday = weekdays[vietnamTime.getUTCDay()];
+    
+    return `${weekday}, ${day}/${month}/${year}, ${hours}:${minutes}`;
+  }
+  
+
 export {
-    checkEmptyVal,
-    checkEnable,
-    checkPasswordValid,
-    checkValidatePhone,
-    convertObjectParams,
-    convertStringSlug,
-    convertToObject,
-    getSelectData,
-    isValidEmail,
-    omit
+  checkEmptyVal,
+  checkEnable,
+  checkPasswordValid,
+  checkValidatePhone,
+  convertObjectParams,
+  convertStringSlug,
+  convertToObject, formatDateViWithTimezone, getSelectData, getValuesFromTree, isValidEmail,
+  omit
 };
 

@@ -1,11 +1,14 @@
-import { uploadMultipleResource, uploadResourceSingle, uploadVideoResource } from "../../../../config/cloudinary/uploadResource.js";
+import { generateImageURLByVideoID, uploadMultipleResource, uploadResourceSingle, uploadVideoResource } from "../../../../config/cloudinary/uploadResource.js";
 import i18n from "../../../../config/i18n/i18n.config.js";
 import postEntities from "../../../../entities/post.js";
+import routerEntities from "../../../../entities/routers.js";
 import { Api403Error } from "../../../../frameswork/web/plugins/error.response.js";
 import { checkEmptyVal } from "../../../../utils/index.utils.js";
-const createDataResourcePost = async(payloadEntities,files,postRepository) => {
+const createDataResourcePost = async(payloadEntities,files,postRepository,routerRepository) => {
     const {title , description, content, status,categories_id, isTrending, type, author_id, media_type } = payloadEntities
      
+    console.log(payloadEntities,'payloadEntities')
+
     if(checkEmptyVal(title) || checkEmptyVal(status) || checkEmptyVal(categories_id) || checkEmptyVal(content))
         throw new Api403Error(i18n.translate("error.not_found.data"))
  
@@ -14,22 +17,23 @@ const createDataResourcePost = async(payloadEntities,files,postRepository) => {
     }
 
     let objectHash = {};
-    console.log(payloadEntities,'payloadEntities',files)
-
-    if(files && files.images) {
+    if(files && files?.images) {
         const imagesResponse = await uploadMultipleResource(files.images);
         objectHash.images = imagesResponse
     }
-    if(files && files.thumb[0]) {
+    if(files && files?.thumb && files?.thumb[0]) {
         const public_id = await uploadResourceSingle(files.thumb[0]);
         objectHash.thumb = public_id
     }
-    if(files && files.videos && media_type == 3) {
+    if(files && files?.videos && media_type == 3) {
         const public_id_video = await uploadVideoResource(files.videos[0])
         objectHash.videos = public_id_video
+        
+        const imaeg_crop_size_id = await generateImageURLByVideoID(public_id_video)
+        if(imaeg_crop_size_id)
+            objectHash.thumb = imaeg_crop_size_id
     }   
-
-
+    
 
     const dataEntities = postEntities(
         {
@@ -43,11 +47,22 @@ const createDataResourcePost = async(payloadEntities,files,postRepository) => {
         videos :  objectHash.videos ?? null,
         isTrending, 
         type, 
+        media_type,
         author_id : (author_id != 'undefined' || !author_id) ? author_id  : null
 
     })
 
     const response = await postRepository.createResource(dataEntities);
+
+    if(response) {
+        const dataRouterEntities = routerEntities({
+            model_name :response?.constructor.modelName,
+            model_id : response._id,
+            model_title : response.title,
+            slug : response.slug,
+        })
+        await routerRepository.createRouterResource(dataRouterEntities)
+    }
 
     return response;
 }

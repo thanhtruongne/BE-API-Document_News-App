@@ -11,11 +11,9 @@ export default function postCategoriesRepositoriesapp(repository) {
 
     const findByIDandUpdate = (_id,payload) => repository.findByIDandUpdate(_id,payload)
 
-    // const removeResource = (_id) => repository.removeResource(_id)
-
-    // const findByQuery = (query) => repository.findByQuery(query)
-
-    // const getDetailResource = (_id) => repository.getDetailResource(_id)
+    //FE
+    const findByQuery = (query) => repository.findByQuery(query)
+    
 
     return {
         createResource,
@@ -23,7 +21,8 @@ export default function postCategoriesRepositoriesapp(repository) {
         countAll,
         findDetail,
         findByID,
-        findByIDandUpdate
+        findByIDandUpdate,
+        findByQuery
         // getTreeData,
         // changeStatus,
         // removeResource,

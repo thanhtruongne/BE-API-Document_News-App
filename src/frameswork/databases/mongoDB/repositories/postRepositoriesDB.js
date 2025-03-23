@@ -20,7 +20,7 @@ const postRepositoriesDB = () => {
     }
 
     const fetchAllData = async(params) => {
-        return await posts.find(omit(params,'page','perPage','select'))
+        return await posts.find(omit(params,'page','perPage','select','sort'))
         .select(params.select)  
         .skip(params.perPage * params.page - params.perPage)
         .limit(params.perPage)
@@ -34,6 +34,7 @@ const postRepositoriesDB = () => {
                 select : "_id full_name"
             }
         ])
+        .sort(params?.sort)
         .lean()
         .exec()
 
@@ -59,8 +60,13 @@ const postRepositoriesDB = () => {
     }
 
     const findById = async(_id) => {
-        return await posts.findById(_id)
-        // .lean()
+        return await posts.findById(_id).populate([
+            {
+                path : "categories_id",
+                select : "title _id parent_id slug",
+            },
+        ])
+        .lean()
         .exec();
     }
 
@@ -83,13 +89,34 @@ const postRepositoriesDB = () => {
         })
     }
 
+
+    const findByQuery = async(query) => {
+        return await posts.find(omit(query,'sort','select','limit'))
+        .select(query.select)
+        .limit(query.limit)
+        .sort(query.sort)
+        .populate([ 
+            {
+                path : "categories_id",
+                select : "title _id parent_id",
+            },
+            {
+                path : "author_id",
+                select : "_id full_name avatar"
+            }
+        ])
+        // .lean()
+        .exec()
+    }
+
     return {
         createResource,
         fetchAllData,
         fetchCountAll,
         findDetail,
         findById,
-        findByIDandUpdate
+        findByIDandUpdate,
+        findByQuery
 
     }
 }
