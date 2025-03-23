@@ -14,31 +14,33 @@ const updateDataResource = async(id,payloadEntities,files,postRepository,postSer
 
     let object = {}
 
-    if(files && files.thumb[0]) {
+    if(files && files?.thumb && files?.thumb[0]) {
         thumb = await postService.updateImage(already_post?.thumb, thumb) // return ra publicID thumb
         object.thumb = thumb
     }
 
-    if(files && files.images) {
+    if(files && files?.images) {
         images = await postService.updateMultipleImages(already_post?.images,files.images)
         object.images = images
     }
 
-    if(files && files.videos) {
+    if(files && files?.videos) {
         images = await postService.updateVideos(already_post?.videos,files.videos)
         object.videos = videos
     }
    
+    console.log(author_id,'author_idasdsadsad')
     const dataEntities = postEntities({
         title,
         description,
         categories_id,
         status,
         content,
-        thumb : thumb == undefined ? already_post?.thumb : thumb,
-        images : images == undefined ? already_post?.images : images,
+        thumb : object.thumb == undefined ? already_post?.thumb : thumb,
+        images : object.images == undefined ? already_post?.images : images,
+        videos :  object.videos == undefined ? already_post?.videos : videos,
         isTrending :  isTrending && isTrending == 'true' ? true : false,
-        author_id,
+        author_id :  author_id ? author_id  : null,
         type,
         media_type : media_type ?? already_post.media_type
     })

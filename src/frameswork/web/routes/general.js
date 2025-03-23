@@ -13,7 +13,7 @@ import postService from "../../services/postService.js"
 import { CatchingCategoryData, CatchingRenderData } from "../middlewares/redis/index.js"
 
 const generalRouter = (express,redisCli) => {
-   const router = express.Router()
+   const router = express.Router()  
 
    //load depend
 
@@ -25,6 +25,7 @@ const generalRouter = (express,redisCli) => {
       categoriesRepositoriesApp(categoriesRepositoriesDB()),
       redisCli
    )
+   
 
    router.get('/setting/get-data-layout',generalControllerInit.getDataLayout)
    
@@ -32,12 +33,14 @@ const generalRouter = (express,redisCli) => {
 
    router.get('/categories/getData',[CatchingCategoryData(redisCli,CacheDynamic.CATEGORIES_DATA_NAVBAR)],generalControllerInit.getDataCategoryNavbar)
    
+   router.get('/post/getContent-data',[CatchingCategoryData(redisCli,CacheDynamic.POST_DATA_CONTENT_PAGE_SIDE)],generalControllerInit.getContentPageData);
 
 
+   router.get('/:slug',generalControllerInit.getDataSlugRouter)
 
 
    return router
 }
 
 
-export default generalRouter
+export default generalRouter     

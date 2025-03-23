@@ -27,7 +27,7 @@ class authorController extends BaseController {
 
     getDataResourceAuthor = catchingAsyncAwait(async(req,res,next) => {
         const params = this.convertParamsObject(req.query);
-        // console.log()
+
         params.select = params.select ??  '-description -updatedAt -createdAt'
         
         const response = await getAllDataAuthor(params,this.authorRepository)

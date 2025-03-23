@@ -15,7 +15,7 @@ const routerRepositoriesDB = () => {
 
 
     const updateData = async(id,payload) => {
-        return await routers.findByIdAndUpdate({model_id : id}, {
+        return await routers.findOneAndUpdate({model_id : id}, {
             model_title : payload.getModelTitle(),
             model_name : payload.getModelName(),
             slug : payload.getSlug(),
@@ -24,9 +24,13 @@ const routerRepositoriesDB = () => {
             new : true
         })
     }
+
+    const findOneByQuery = async(query) => {
+        return await routers.findOne(query).lean().exec()
+    }
     
     return {
-        createData,updateData
+        createData,updateData,findOneByQuery
     }
 }
 

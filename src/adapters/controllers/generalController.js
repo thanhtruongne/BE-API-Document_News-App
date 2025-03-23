@@ -1,7 +1,9 @@
 import moment from 'moment/moment.js';
 import querystring from 'querystring';
 import getDataCategoryNav from '../../application/use_cases/generals/category/getDataCategoryNavnar.js';
+import getDataContentPage from '../../application/use_cases/generals/posts/getDataContentPage.js';
 import getDataNotify from '../../application/use_cases/generals/posts/getDataNotify.js';
+import getDataRouterSlug from '../../application/use_cases/generals/Router/getDataRouterSlug.js';
 import getDataLayout from '../../application/use_cases/generals/settings/getDataLayout.js';
 import { REQUEST_CUSTOM } from "../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../helpers/catchingAsyncAwait.aysnc.js";
@@ -29,7 +31,6 @@ class GeneralController extends BaseController {
         const params = this.convertParamsObject(req.query);
         
         const response = await getDataNotify(params,this.postRepository)
-        console.log(response,'response');
         const data = response.map(item => {
             item.timeMoment = moment(item.createdAt).locale('vi').format("HH:mm DD-MM-YYYY");
             return item
@@ -64,9 +65,29 @@ class GeneralController extends BaseController {
         REQUEST_CUSTOM(res,'Get Data CateTree Successfully', response)
     }) 
 
+    getContentPageData =  catchingAsyncAwait(async(req,res)=> {
+        const response = await getDataContentPage(null,this.categoriesRepository,this.postRepository,this.postService);
 
+        if(response && response.length != 0) {     
+            let stringKey = req.params.id || ''
+            this.redisClient.setnx(
+                CacheDynamic.POST_DATA_CONTENT_PAGE_SIDE + '_' +  stringKey,
+                JSON.stringify(response), 
+                60 * 200,
+            )
+        }
 
+        REQUEST_CUSTOM(res,'Get Data Successfully', response)
+    }) 
 
+    getDataSlugRouter = catchingAsyncAwait(async(req,res)=> {
+        const slug = req.params.slug
+        const response = await getDataRouterSlug(slug,this.routerRepository,this.postRepository,this.categoriesRepository);
+        
+        
+
+        REQUEST_CUSTOM(res,'Get Data Successfully', response)
+    }) 
       
 }
 

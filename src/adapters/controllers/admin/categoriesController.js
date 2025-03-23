@@ -3,6 +3,7 @@ import createData from "../../../application/use_cases/admins/categories/createD
 import getDataTree from "../../../application/use_cases/admins/categories/getDataTree.js";
 import getDetailData from "../../../application/use_cases/admins/categories/getDetailData.js";
 import removeResource from "../../../application/use_cases/admins/categories/removeResource.js";
+import updateData from "../../../application/use_cases/admins/categories/updateData.js";
 import { REQUEST_CUSTOM } from "../../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../../helpers/catchingAsyncAwait.aysnc.js";
 import BaseController from "../BaseController.js";
@@ -15,13 +16,20 @@ class categoriesController extends BaseController {
 
     createResource = catchingAsyncAwait(async(req,res,next) => {
         const payload = req.body;
-        const response = await createData(payload,this.categoriesRepository)
+        const response = await createData(payload,this.categoriesRepository,this.routerRepository)
         REQUEST_CUSTOM(res,'Tạo danh mục thành công',response) 
     })
 
+    updateResource = catchingAsyncAwait(async(req,res,next) => {
+        const payload = req.body;
+        const id = req.params.id
+        const response = await updateData(id,payload,this.categoriesRepository,this.routerRepository)
+        REQUEST_CUSTOM(res,'Update danh mục thành công',response) 
+    })
+
     getTreeData = catchingAsyncAwait(async(req,res,next) => {
-        const {id} = req.query    
-        const response = await getDataTree(id,this.categoriesRepository)
+        const {id} = req.query  
+        const response = await getDataTree(id,null,this.categoriesRepository)
         // if(response && response?.length > 0 && id == null) {
         //     this.redisClient.setnx(
         //         CacheDynamic.DATA_TREE_FORM_CATE,

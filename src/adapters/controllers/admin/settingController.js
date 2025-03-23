@@ -13,7 +13,6 @@ class settingController extends BaseController {
     storeResource = catchingAsyncAwait(async(req,res,next) => {
         const payload = req.body;
         const logo = req.file;
-        console.log(logo);
         if(logo)
             payload.logo = logo
 

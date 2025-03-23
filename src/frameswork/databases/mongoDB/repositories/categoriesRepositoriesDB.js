@@ -14,6 +14,18 @@ const categoriesRepositoriesDB = () => {
         })
     }
 
+    const updateResource = async(_id,payloadEntities) => {
+        return await categoriesModel.findByIdAndUpdate(_id,{
+            title : payloadEntities.getTitle(),
+            description : payloadEntities.getDescription(),
+            status : payloadEntities.getStatus(),
+            parent_id : payloadEntities.getParentID(),
+        },{
+            new : true,
+            runValidators : true
+        })
+    }
+
 
     const findByQueryCate = async(_id,select = {
         title : 1 , description : 2 , status : 3, parent_id : 4 , slug : 5
@@ -30,17 +42,19 @@ const categoriesRepositoriesDB = () => {
         .lean()
         .exec()
     }
+    
 
 
-    const fetchAllDataTree = async(parent_id = null) => {
-        const data =  await categoriesModel.find({parent_id}).select('slug _id parent_id title status')
+    const fetchAllDataTree = async(parent_id = null,query) => {
+
+        const data =  await categoriesModel.find({parent_id,...query}).select('slug _id parent_id title status')
         .lean()
         .exec()
         .then(res => res.map(({_id,...item},index) => ({ value: _id,key : index , ...item })));
 
         return Promise.all(data.map(async(item) => ({
-           ...item,
-           children : await fetchAllDataTree(item.value)
+           ...item, 
+           children : await fetchAllDataTree(item.value,query)
         })))
 
     }
@@ -69,9 +83,35 @@ const categoriesRepositoriesDB = () => {
         return await categoriesModel.find(query).lean().exec()
     }
 
+    const getParentTree = async (parent_id) => {
+        if (!parent_id) {
+            return [];
+        }
+        const currentCategory = await categoriesModel.findById(parent_id)
+            .select('slug _id parent_id title status')
+            .lean()
+            .exec();
+
+        if (!currentCategory) {
+            return [];
+        }
+
+        const formattedCategory = {
+            value: currentCategory._id,
+            slug: currentCategory.slug,
+            title: currentCategory.title,
+            status: currentCategory.status,
+            parent_id: currentCategory.parent_id
+        };
+
+        const parent = await getParentTree(currentCategory.parent_id);
+        return [...parent, formattedCategory];
+    }
+
 
     return {
         createResource,
+        updateResource,
         findByQueryCate,
         fetchAll,
         fetchAllDataTree,
@@ -79,7 +119,9 @@ const categoriesRepositoriesDB = () => {
         removeResource,
         findByQueryAndUpdateMany,
         findByQuery,
-        getDetailResource
+        getDetailResource,
+        getParentTree,
+
     }
 }
 

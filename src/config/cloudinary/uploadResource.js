@@ -3,11 +3,12 @@ import { BusinessLogicError } from '../../frameswork/web/plugins/error.response.
 import cloudinary from "./cloudinary.js"
 
 const uploadResourceSingle = (file) => {
-  return new Promise(async(resovle,reject) => {
+  return new Promise((resovle,reject) => {
         if (!file || !file.buffer) {
             return reject(new Error("File buffer is undefined"));
         }
-        const response = await cloudinary.uploader.upload_stream({
+        const response = cloudinary.uploader.upload_stream({
+            resource_type: 'image',
             folder : "BlogApp"
         }, (error,result) => {
             if(result)
@@ -22,11 +23,11 @@ const uploadResourceSingle = (file) => {
 
 const uploadMultipleResource = (files) => {
     return Promise.all(files.map(file => {
-        return new Promise(async(resolve,reject) => {
+        return new Promise((resolve,reject) => {
             if (!file || !file.buffer) {
                 return reject(new Error("File buffer is undefined"));
             }
-            const response = await cloudinary.uploader.upload_stream({
+            const response = cloudinary.uploader.upload_stream({
                 folder : "BlogApp"
             }, (error,result) => {
                 if (error) 
@@ -39,17 +40,16 @@ const uploadMultipleResource = (files) => {
     }))
 }
 
-const generateImageURL =(public_id) => {
-   try {
-    console.log(public_id)
-      if(!public_id || public_id == undefined || public_id == 'undefined') {
-         return null;
-      }
-      const response = cloudinary.url(public_id,{secure : true});
-      return response
-   } catch (error) {
-        throw new BusinessLogicError(error.message);
-   }
+const generateImageURL = (public_id) => {
+    try {
+        if(!public_id || public_id == undefined || public_id == 'undefined') {
+            return null;
+        }
+        const response = cloudinary.url(public_id,{secure : true});
+        return response
+    } catch (error) {
+            throw new BusinessLogicError(error.message);
+    }
 }
 const generateVideoURL = (public_id) => {
     try {
@@ -81,7 +81,6 @@ const destroyCloudinaryURL = async(public_id) => {
 
 const uploadVideoResource = (file) => {
     return new Promise((resovle,reject) => {
-        console.log(file)
         if (!file || !file.buffer) {
             return reject(new Error("File buffer is undefined"));
         }
@@ -103,5 +102,38 @@ const uploadVideoResource = (file) => {
   })
 }
 
-export { destroyCloudinaryURL, generateImageURL, generateVideoURL, uploadMultipleResource, uploadResourceSingle, uploadVideoResource }
+const generateImageURLByVideoID = async(videoID) => {
+   try {
+        const thumbnailUrl = cloudinary.url(videoID, {
+            resource_type: 'video',
+            crop: 'fill',
+            gravity: 'auto',
+            timestamp: 1,  
+            format: 'jpg'  
+            });
+        if(thumbnailUrl) {
+            const response = await uploadImageByCropVideoSize(thumbnailUrl)
+            return response
+        }
+        return null
+   } catch (error) {
+        console.log('Error',error)
+        throw new BusinessLogicError(error.message);
+   }
+}
+const uploadImageByCropVideoSize = async(url) => {
+    try {
+        const result = await cloudinary.uploader.upload(url, {
+            resource_type: 'image',
+            folder : "BlogApp/Videos/Crop"
+        });
+        return result.public_id
+      } catch (error) {
+        console.log('Error',error)
+        throw new BusinessLogicError(error.message);
+      }
+  
+  }
+  
+export { destroyCloudinaryURL, generateImageURL, generateImageURLByVideoID, generateVideoURL, uploadMultipleResource, uploadResourceSingle, uploadVideoResource }
 

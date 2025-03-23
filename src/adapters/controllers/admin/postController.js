@@ -50,8 +50,6 @@ class postController extends BaseController {
             totalPages : Math.ceil(countAllData / params.perPage),
             itemsPerPage :  params.perPage,
         }
-        console.log(options,'options')
-
         // Cache
         // if(response && response.length != 0) {
         //     let stringKey = querystring.stringify(omit(params,'select','perPage','select')) || ' '
@@ -94,7 +92,7 @@ class postController extends BaseController {
 
     getDetailResource = catchingAsyncAwait(async(req,res,next) => {
         const {id} = req.params;
-        console.log(id,'id')
+
         const response = await getDetailResourceBlog(id,this.postRepository)
         REQUEST_CUSTOM(res,'Get detail success',response) 
     })
