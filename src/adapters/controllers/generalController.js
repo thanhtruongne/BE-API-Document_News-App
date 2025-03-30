@@ -1,6 +1,11 @@
 import moment from 'moment/moment.js';
 import querystring from 'querystring';
 import getDataCategoryNav from '../../application/use_cases/generals/category/getDataCategoryNavnar.js';
+import changeStatusComment from '../../application/use_cases/generals/posts/comment/changeStatus.js';
+import deleteComment from '../../application/use_cases/generals/posts/comment/deleteComment.js';
+import getCommentQuery from '../../application/use_cases/generals/posts/comment/getCommentQuery.js';
+import getMoreReply from '../../application/use_cases/generals/posts/comment/getMoreReply.js';
+import storeComment from '../../application/use_cases/generals/posts/comment/storeComment.js';
 import getDataContentPage from '../../application/use_cases/generals/posts/getDataContentPage.js';
 import getDataNotify from '../../application/use_cases/generals/posts/getDataNotify.js';
 import getDataRouterSlug from '../../application/use_cases/generals/Router/getDataRouterSlug.js';
@@ -14,8 +19,16 @@ import BaseController from "./BaseController.js";
 
 
 class GeneralController extends BaseController {
-    constructor(settingRepository,generalService,postRepository,postService,categoriesRepository,redisClient){
-        super({settingRepository,generalService,redisClient,postRepository,postService,categoriesRepository})
+    constructor(
+        settingRepository,
+        generalService,
+        postRepository,
+        postService,
+        categoriesRepository,
+        commentRepository,
+        redisClient
+    ){
+        super({settingRepository,generalService,redisClient,postRepository,postService,categoriesRepository,commentRepository})
     }
 
 
@@ -82,12 +95,58 @@ class GeneralController extends BaseController {
 
     getDataSlugRouter = catchingAsyncAwait(async(req,res)=> {
         const slug = req.params.slug
-        const response = await getDataRouterSlug(slug,this.routerRepository,this.postRepository,this.categoriesRepository);
+        const response = await getDataRouterSlug(
+            slug,
+            this.routerRepository,
+            this.postRepository,
+            this.categoriesRepository,
+            this.commentRepository
+        );
         
         
 
         REQUEST_CUSTOM(res,'Get Data Successfully', response)
     }) 
+
+
+    storeCommentBlog = catchingAsyncAwait(async(req,res)=> {
+        const id = req.params.id
+        const payload = req.body
+        const response = await storeComment(id,payload,this.commentRepository,this.postRepository)
+
+        REQUEST_CUSTOM(res,'Successfully', response)
+    }) 
+
+    deleteCommentBlog = catchingAsyncAwait(async(req,res)=> {
+        const id = req.params.id
+        const response = await deleteComment(id,this.commentRepository)
+
+        REQUEST_CUSTOM(res,'Delete Successfully', response)
+    }) 
+
+    changeStatusComment = catchingAsyncAwait(async(req,res)=> {
+        const id = req.params.id
+        const payload = req.body
+        const response = await changeStatusComment(id,payload,this.commentRepository)
+
+        REQUEST_CUSTOM(res,'Change payload successfully', response)
+    }) 
+
+    getMoreReplyComment = catchingAsyncAwait(async(req,res)=> {
+        const {id} = req.params
+        const response = await getMoreReply(id,this.commentRepository)
+
+        REQUEST_CUSTOM(res,'Get more reply successfully', response)
+    })  
+
+    getCommentQueryBlog = catchingAsyncAwait(async(req,res)=> {
+        const params = req.query;
+        const id = req.params.id;
+
+        const response = await getCommentQuery(id,params,this.commentRepository)
+
+        REQUEST_CUSTOM(res,'Get comment newest successfully', response)
+    })  
       
 }
 

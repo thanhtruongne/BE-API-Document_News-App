@@ -1,10 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 let commentSchema = new Schema({
     postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true, index : true },
-    authorId: {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "User"
-    },
     full_name: {
         type:String,
         required : false
@@ -17,16 +13,56 @@ let commentSchema = new Schema({
     },
     content: { type: String, required: true },
     parent_id: {type: Schema.Types.ObjectId, ref: 'Comment', default : null},
+    replyCount : {
+        type: Number,
+        default: 0
+    },
+    level : {
+        type: Number,
+        default: 0
+    },
     like : {
         type : Number,
         default : 0
-    }
+    },
 },{ 
     timestamps : true,
-    collection: 'Comment'
+    collection: 'Comment',
 })
+//update level
+commentSchema.pre('save', async function(next) {
+    if (this.parent_id) {
+        try {
+            const parent = await this.constructor.findById(this.parent_id);
+            if (parent) {
+                this.level = (parent.level || 0) + 1;
+                
+                await this.constructor.findByIdAndUpdate(
+                    this.parent_id,
+                    { $inc: { replyCount: 1 } }
+                );
+            }
+        } catch (error) {
+            next(error);
+        }
+    }
+    next();
+});
 
-
+// remove and update level
+commentSchema.pre('remove', async function(next) {
+    if (this.parent_id) {
+        try {
+            await this.constructor.findByIdAndUpdate(
+                this.parent_id,
+                { $inc: { replyCount: -1 } }
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+    next();
+});
 
 
 export default mongoose.model('Comment',commentSchema);   

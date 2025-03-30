@@ -64,7 +64,7 @@ let Posts = new Schema({
         type: Number,
         default : 0
     },  
-    comment : [{  type : mongoose.Types.ObjectId, ref : 'Comment', index : true}],
+    comments : [{  type : mongoose.Types.ObjectId, ref : 'Comment', index : true}],
     user_id : {
        type : mongoose.Types.ObjectId,
        ref : 'Users'

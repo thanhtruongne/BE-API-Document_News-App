@@ -3,7 +3,7 @@ import { Api403Error } from "../../../../frameswork/web/plugins/error.response.j
 const getDetailResourceBlog = async(_id,postRepository) => {
     if(!_id)
         throw new Api403Error(i18n.translate("error.not_found.data"))
-    const response = await postRepository.findByID(_id)
+    const response = await postRepository.findByIdNoneLean(_id)
     if(!response)
         throw new Api403Error(i18n.translate("error.not_found.data"))
 

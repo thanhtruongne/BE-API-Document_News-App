@@ -1,11 +1,13 @@
 import GeneralController from "../../../adapters/controllers/generalController.js"
 import categoriesRepositoriesApp from "../../../application/repositories/categoriesRepositories.app.js"
+import commentRepositoriesApp from "../../../application/repositories/commentRepositories.app.js"
 import postRepositoriesApp from "../../../application/repositories/postCategoriesRepositories.app.js"
 import settingRepositoriesApp from "../../../application/repositories/settingRepositories.app.js"
 import generalServiceApp from "../../../application/services/generalService.js"
 import postServiceApp from "../../../application/services/postServiceApp.js"
 import CacheDynamic from '../../../utils/constants.js'
 import categoriesRepositoriesDB from "../../databases/mongoDB/repositories/categoriesRepositoriesDB.js"
+import commentRepositoriesDB from "../../databases/mongoDB/repositories/commentRepositoriesDB.js"
 import postRepositoriesDB from "../../databases/mongoDB/repositories/postRepositoriesDB.js"
 import settingReposotoriesDB from "../../databases/mongoDB/repositories/settingReposotoriesDB.js"
 import generalService from "../../services/generalService.js"
@@ -23,6 +25,7 @@ const generalRouter = (express,redisCli) => {
       postRepositoriesApp(postRepositoriesDB()),
       postServiceApp(postService()),
       categoriesRepositoriesApp(categoriesRepositoriesDB()),
+      commentRepositoriesApp(commentRepositoriesDB()),
       redisCli
    )
    
@@ -38,9 +41,19 @@ const generalRouter = (express,redisCli) => {
 
    router.get('/:slug',generalControllerInit.getDataSlugRouter)
 
+   router.post('/post/comment/store/:id',generalControllerInit.storeCommentBlog)
+
+   router.get('/post/comment/getMoreReply/:id',generalControllerInit.getMoreReplyComment)
+
+   router.delete('/post/comment/delete/:id',generalControllerInit.deleteCommentBlog)
+
+   router.get('/post/comment/getCommentByQuery/:id',generalControllerInit.getCommentQueryBlog)
+
+   router.put('/post/comment/changeStatus/:id',generalControllerInit.changeStatusComment)
+
 
    return router
 }
 
 
-export default generalRouter     
+export default generalRouter        

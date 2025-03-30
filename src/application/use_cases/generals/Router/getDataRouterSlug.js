@@ -5,7 +5,7 @@ import { formatDateViWithTimezone } from "../../../../utils/index.utils.js";
 
 
 
-const getDataRouterSlug = async(slug,routerRepository,postRepository,categoriesRepository) => {
+const getDataRouterSlug = async(slug,routerRepository,postRepository,categoriesRepository,commentRepository) => {
     if(!slug)
         throw new Api401Error(i18n.translate("error.not_found.data"))
 
@@ -42,10 +42,6 @@ const getDataRouterSlug = async(slug,routerRepository,postRepository,categoriesR
             limit : 5,
             select : '_id categories_id description title slug thumb',
         })
-
-     
-      
-
    
        delete result.categories_id
        delete result.createdAt
