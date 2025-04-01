@@ -37,7 +37,8 @@ const commentRepositoriesDB = () => {
     }
 
     const findByQuery = async(query) => {
-        return await comment.find(omit(query,'limit'))
+        console.log(omit(query,'limit','sort'),query.sort,'omiottttt')
+        return await comment.find(omit(query,'limit','sort'))
         .limit(query?.limit || 4)
         .sort(query.sort || { createdAt: 1 })
         .lean()

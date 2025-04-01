@@ -17,6 +17,9 @@ export default function postCategoriesRepositoriesapp(repository) {
 
     //FE
     const findByQuery = (query) => repository.findByQuery(query)
+
+
+
     
 
     return {
@@ -29,10 +32,5 @@ export default function postCategoriesRepositoriesapp(repository) {
         findByQuery,
         findByIdNoneLean,
         findByIDandUpdatePayload
-        // getTreeData,
-        // changeStatus,
-        // removeResource,
-        // findByQuery,
-        // getDetailResource
     };
 }

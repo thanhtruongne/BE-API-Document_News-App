@@ -14,11 +14,10 @@ import generalService from "../../services/generalService.js"
 import postService from "../../services/postService.js"
 import { CatchingCategoryData, CatchingRenderData } from "../middlewares/redis/index.js"
 
-const generalRouter = (express,redisCli) => {
+const generalRouter = (express,redisCli,socketService) => {
    const router = express.Router()  
 
    //load depend
-
    const generalControllerInit = new GeneralController(
       settingRepositoriesApp(settingReposotoriesDB()),
       generalServiceApp(generalService()),
@@ -26,8 +25,11 @@ const generalRouter = (express,redisCli) => {
       postServiceApp(postService()),
       categoriesRepositoriesApp(categoriesRepositoriesDB()),
       commentRepositoriesApp(commentRepositoriesDB()),
-      redisCli
+      redisCli,
+      socketService
    )
+
+   // console.log(socketService,'sockerService')
    
 
    router.get('/setting/get-data-layout',generalControllerInit.getDataLayout)

@@ -26,9 +26,19 @@ class GeneralController extends BaseController {
         postService,
         categoriesRepository,
         commentRepository,
-        redisClient
+        redisClient,
+        socketService
     ){
-        super({settingRepository,generalService,redisClient,postRepository,postService,categoriesRepository,commentRepository})
+        super({
+            settingRepository,
+            generalService,
+            redisClient,
+            postRepository,
+            postService,
+            categoriesRepository,
+            commentRepository,
+            socketService
+        })
     }
 
 
@@ -140,10 +150,9 @@ class GeneralController extends BaseController {
     })  
 
     getCommentQueryBlog = catchingAsyncAwait(async(req,res)=> {
-        const params = req.query;
         const id = req.params.id;
 
-        const response = await getCommentQuery(id,params,this.commentRepository)
+        const response = await getCommentQuery(id,this.commentRepository)
 
         REQUEST_CUSTOM(res,'Get comment newest successfully', response)
     })  
