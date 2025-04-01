@@ -11,6 +11,8 @@ class BaseController {
         postService,
         authorRepository,
         settingRepository,
+        commentRepository,
+        socketService
     }){
         this.userRepository =  userRepository;
         this.authService =  authService    
@@ -21,6 +23,8 @@ class BaseController {
         this.postRepository = postRepository;
         this.postService = postService;
         this.routerRepository = routerRepositoriesApp(routerRepositoriesDB());
+        this.commentRepository = commentRepository;
+        this.socketService = socketService
     }
 
     convertParamsObject(query) {

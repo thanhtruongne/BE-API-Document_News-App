@@ -18,7 +18,7 @@ export default function categoriesRepositoriesApp(repository) {
     const getParentTree = (parent_id) => repository.getParentTree(parent_id)
  
     return {
-        createResource,
+        createResource, 
         updateResource,
         findByQueryAndUpdateMany,
         getTreeData,

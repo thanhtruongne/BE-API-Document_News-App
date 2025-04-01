@@ -4,7 +4,7 @@ class RedisUtilsRepo {
    
     static async set(key,value) {
         try {
-            const res = await instanceRedis.set(key,value)  
+            const res = await instanceRedis.client.set(key,value)  
             return res
         } catch (error) {
             throw  error
@@ -14,7 +14,7 @@ class RedisUtilsRepo {
 
     static async get(key) {
         try {
-            const res = await  instanceRedis.get(key);
+            const res = await  instanceRedis.client.get(key);
             return res
         } catch (error) {
             throw  error
@@ -23,7 +23,7 @@ class RedisUtilsRepo {
 
     static async setnx(key, value, exprie) {
         try {
-            const res = await instanceRedis.setEx(key,exprie,value);
+            const res = await instanceRedis.client.setEx(key,exprie,value);
             return res
         } catch (error) {
             throw  error
@@ -34,7 +34,7 @@ class RedisUtilsRepo {
 
     static async incr(key){
         try {
-            const res = await instanceRedis.incr(key);
+            const res = await instanceRedis.client.incr(key);
             return res
         } catch (error) {
             throw  error
@@ -43,7 +43,7 @@ class RedisUtilsRepo {
     
     static async decrby(key, count){
         try {
-            const res = await instanceRedis.decrby(key,count);
+            const res = await instanceRedis.client.decrby(key,count);
             return res
         } catch (error) {
             throw  error
@@ -53,7 +53,7 @@ class RedisUtilsRepo {
     // expire key redis
     static async expire(key, ttl) {
         try {
-            const res = await  instanceRedis.expire(key, ttl)
+            const res = await  instanceRedis.client.expire(key, ttl)
             return res
         } catch (error) {
             throw  error
@@ -62,20 +62,32 @@ class RedisUtilsRepo {
 
     static async ttl(key) {
         try {
-            const res = await  instanceRedis.ttl(key)
+            const res = await  instanceRedis.client.ttl(key)
             return res
         } catch (error) {
             throw  error
         }  
     }
 
-    static async exists(key, ttl) {
+    static async exists(key) {
         try {
-            const res = await  instanceRedis.exists(key)
+            const res = await  instanceRedis.client.exists(key)
             return res
         } catch (error) {
             throw error
         }  
+    }
+
+    //Pub
+    static async publish(channel, data) {
+        await instanceRedis.publisher.publish(channel, JSON.stringify(data));
+    }
+
+    //Sub
+    static async subscribe(channel, callback) {
+        await instanceRedis.subscriber.subscribe(channel, (message) => {
+            callback(JSON.parse(message));
+        });
     }
 }
 

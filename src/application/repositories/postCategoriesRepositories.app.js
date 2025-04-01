@@ -9,10 +9,17 @@ export default function postCategoriesRepositoriesapp(repository) {
 
     const findByID = (id) => repository.findById(id)
 
+    const findByIdNoneLean = (id) => repository.findByIdNoneLean(id)
+
     const findByIDandUpdate = (_id,payload) => repository.findByIDandUpdate(_id,payload)
+
+    const findByIDandUpdatePayload = (_id,payload) => repository.findByIDandUpdatePayload(_id,payload)
 
     //FE
     const findByQuery = (query) => repository.findByQuery(query)
+
+
+
     
 
     return {
@@ -22,11 +29,8 @@ export default function postCategoriesRepositoriesapp(repository) {
         findDetail,
         findByID,
         findByIDandUpdate,
-        findByQuery
-        // getTreeData,
-        // changeStatus,
-        // removeResource,
-        // findByQuery,
-        // getDetailResource
+        findByQuery,
+        findByIdNoneLean,
+        findByIDandUpdatePayload
     };
 }

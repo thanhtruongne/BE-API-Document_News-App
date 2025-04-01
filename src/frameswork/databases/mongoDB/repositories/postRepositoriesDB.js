@@ -53,7 +53,8 @@ const postRepositoriesDB = () => {
             },
             {
                 path : "author_id",
-                select : "_id full_name"
+                select : "_id full_name slug status avatar",
+                match : { status : "Active" }
             }
         ]).lean().exec()
 
@@ -62,11 +63,48 @@ const postRepositoriesDB = () => {
     const findById = async(_id) => {
         return await posts.findById(_id).populate([
             {
+                path : "author_id",
+                select : "title _id",
+            },
+            {
                 path : "categories_id",
                 select : "title _id parent_id slug",
-            },
+            },  
+            {
+                path: "comments",
+                select: 'full_name _id parent_id content createdAt status level replyCount like',  // Chọn fields cần thiết
+                match: { 
+                    status: 'Active',
+                    parent_id: null  
+                },
+                options: {
+                    limit: 5,
+                    sort: { like: -1 }
+                },
+            }
         ])
         .lean()
+        .exec();
+    }
+
+    const findByIDandUpdatePayload = async(_id,payload) => {
+        return await posts.findByIdAndUpdate(_id,payload,{
+            new : true
+        })
+    }
+
+    const findByIdNoneLean = async(_id) => {
+        return await posts.findById(_id).populate([
+            {
+                path : "categories_id",
+                select : "title _id parent_id slug",
+            },  
+            {
+                path : "comments",
+                select : "full_name _id parent_id content createdAt status postId",
+            }
+        ])
+        // .lean()
         .exec();
     }
 
@@ -103,6 +141,9 @@ const postRepositoriesDB = () => {
             {
                 path : "author_id",
                 select : "_id full_name avatar"
+            },
+            {
+                path : "comments",
             }
         ])
         // .lean()
@@ -115,6 +156,8 @@ const postRepositoriesDB = () => {
         fetchCountAll,
         findDetail,
         findById,
+        findByIdNoneLean,
+        findByIDandUpdatePayload,
         findByIDandUpdate,
         findByQuery
 
