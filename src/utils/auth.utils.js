@@ -75,14 +75,35 @@ const verifyJWT = (token, keySecret, next) => {
    
 }
 
-const parseJWT = (token) => JSON.parse(Buffer?.from(token?.split('.')[1], 'base64').toString());
+// const parseJWT = (token) => JSON.parse(Buffer?.from(token?.split('.')[1], 'base64').toString());
+const parseJWT = (token) => {
+    try {
+      // Check if token exists and is a string
+      if (!token || typeof token !== 'string') {
+        throw new Error('Invalid token provided');
+      }
+  
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        throw new Error('Invalid JWT format');
+      }
+  
+      const base64Url = parts[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = Buffer.from(base64, 'base64');
+      return JSON.parse(jsonPayload.toString());
+    } catch (error) {
+      console.error('JWT Parse Error:', error.message);
+      return null;
+    }
+  };
 
 const authencation = catchingAsyncAwait(async(req,res,next) => {
     const userRepo = userRepositoriesApp(userRepositoryDB())
     const clientId = req.headers[HEADER.X_CLIENT_ID]
     const refreshToken = req.headers[HEADER.REFRESH_TOKEN]
     const accessToken = req.headers[HEADER.AUTHORIZATION]
-    
+
 
     if((accessToken == 'undefined' || clientId == 'undefined')) {
         return next(new Api403Error(i18n.translate('error.not_found.data')))
@@ -90,14 +111,15 @@ const authencation = catchingAsyncAwait(async(req,res,next) => {
     const parseTokens = (accessToken === 'undefined' || accessToken == null) ? refreshToken : accessToken
      
     const obj = parseJWT(parseTokens)
-    if (!obj.userID) return next(new Api401Error(i18n.translate('error.not_found.data')))
+    console.log(accessToken,refreshToken,'objobjobj')
+    if (!obj?.userID) return next(new Api401Error(i18n.translate('error.not_found.data')))
 
     const userId = clientId || obj.userID;
     if (!userId) return next(new Api403Error(i18n.translate('error.not_found.data')))
 
     const store = await userRepo.findUserKeyTokenID(userId)
     if (!store) return next(new Api404Error(i18n.translate('error.user_id.not_found')))
-    console.log(refreshToken,store,accessToken)
+
     if (refreshToken) {
         try {
             const decodeUser = verifyJWT(refreshToken,store.publicKey,next);

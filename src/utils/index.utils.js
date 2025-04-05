@@ -120,7 +120,27 @@ const getValuesFromTree = (nodes,number = null) => {
     
     return `${weekday}, ${day}/${month}/${year}, ${hours}:${minutes}`;
   }
-  
+
+  function timeSince(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    
+    let interval = seconds / 31536000; // years
+    if (interval > 1) return Math.floor(interval) + " years ago";
+    
+    interval = seconds / 2592000; // months
+    if (interval > 1) return Math.floor(interval) + " months ago";
+    
+    interval = seconds / 86400; // days
+    if (interval > 1) return Math.floor(interval) + " days ago";
+    
+    interval = seconds / 3600; // hours
+    if (interval > 1) return Math.floor(interval) + " hours ago";
+    
+    interval = seconds / 60; // minutes
+    if (interval > 1) return Math.floor(interval) + " minutes ago";
+    
+    return Math.floor(seconds) + " seconds ago";
+}
 
 export {
   checkEmptyVal,
@@ -129,7 +149,6 @@ export {
   checkValidatePhone,
   convertObjectParams,
   convertStringSlug,
-  convertToObject, formatDateViWithTimezone, getSelectData, getValuesFromTree, isValidEmail,
-  omit
+  convertToObject, formatDateViWithTimezone, getSelectData, getValuesFromTree, isValidEmail, omit, timeSince
 };
 

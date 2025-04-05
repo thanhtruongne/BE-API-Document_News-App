@@ -29,7 +29,6 @@ const sign_up = async(payload,userRepository,authService) => {
 
     const tokenPayload = keyTokenEntities({
         _id : user_create_news?._id,
-        email : user_create_news?.email,
         role : user_create_news?.role
     })
     const tokens = await userRepository.createKeyTokens(tokenPayload) 

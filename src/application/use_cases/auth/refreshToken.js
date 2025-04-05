@@ -13,7 +13,6 @@ const refreshToken = async({refreshToken,user,store},userRepository) => {
 
     const userPayload = keyTokenEntities({
         _id : user_exists?._id,
-        email,
         role : user_exists?.role
     })
     const tokens = await userRepository.createKeyTokens(userPayload) 

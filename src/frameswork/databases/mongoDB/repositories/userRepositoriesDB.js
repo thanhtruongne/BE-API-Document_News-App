@@ -19,8 +19,8 @@ const userRepositoryDB = () => {
     const findByQuery = async(query,select = {
          email : 1,phone : 2, role : 3, full_name : 4, avatar : 5, address : 6, posts : 7 ,gender : 8, dateOfBirth : 9 ,status : 10,updatedAt : 11,
          password : 12,_id: 13
-    }) => {
-        return await userModel.findOne(query).select(select).lean().exec();
+    },isLean = true) => {
+        return await userModel.findOne(query).select(select).lean(isLean).exec();
     }
     
     
@@ -51,6 +51,19 @@ const userRepositoryDB = () => {
 
     const deleteResource = async(_id) => await userModel.findByIdAndDelete(_id)
 
+    const updateDataByQuery = async(id, query, fieldsToSelect = 'email full_name avatar imageURL id status createdAt updatedAt role') => {
+        return await userModel.findByIdAndUpdate(id, query, {
+            lean: true,
+            new: true,
+            select: fieldsToSelect
+        })
+    }
+
+    const findByID = async(id,select = '',islean = false) => await userModel.findById(id)
+    .select(select)
+    .lean(islean)
+    .exec()
+
 
     const countData = async(params) => await userModel.countDocuments(omit(params,'page','perPage','select'));
     
@@ -64,7 +77,6 @@ const userRepositoryDB = () => {
             })
             const tokens = await createTokenAccessData(
                 {   userID : keyTokenEntities.getUserID(),
-                    email : keyTokenEntities.getEmail(),
                     role: keyTokenEntities.getRole(),
                 },
                 publicKey,
@@ -101,18 +113,23 @@ const userRepositoryDB = () => {
             }
         })
     }
+
+    const checkExistsField = async(query) => await userModel.exists(query)
     
     return {
         findAll,
         updateData,
         findByQuery,
+        updateDataByQuery,
         createData,
         deleteResource,
         countData,
+        findByID,
         createKeyTokens,
         findUserKeyTokenID,
         deleteKeyTokenID,
-        updateRefreshTokenUsed
+        updateRefreshTokenUsed,
+        checkExistsField
     }
 
 }

@@ -12,16 +12,18 @@ class BaseController {
         authorRepository,
         settingRepository,
         commentRepository,
+        notifyRepository,
         socketService
     }){
         this.userRepository =  userRepository;
-        this.authService =  authService    
+        this.authService =  authService   
         this.redisClient = redisClient;
         this.categoriesRepository = categoriesRepository;
         this.settingRepository = settingRepository
         this.authorRepository = authorRepository
         this.postRepository = postRepository;
         this.postService = postService;
+        this.notifyRepository = notifyRepository;
         this.routerRepository = routerRepositoriesApp(routerRepositoriesDB());
         this.commentRepository = commentRepository;
         this.socketService = socketService

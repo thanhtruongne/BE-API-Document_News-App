@@ -25,7 +25,6 @@ const login = async(payload,userRepository,authService) => {
         throw new Api401Error(i18n.translate('errors.login_fail'))
     const userPayload = keyTokenEntities({
         _id : user_exist?._id,
-        email,
         role : user_exist?.role
     })
     const tokens = await userRepository.createKeyTokens(userPayload) 

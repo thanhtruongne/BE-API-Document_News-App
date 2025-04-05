@@ -1,5 +1,8 @@
 import moment from 'moment/moment.js';
 import querystring from 'querystring';
+import checkExistsMail from '../../application/use_cases/generals/auths/checkExistsMail.js';
+import loginForm from '../../application/use_cases/generals/auths/loginForm.js';
+import registerForm from '../../application/use_cases/generals/auths/registerForm.js';
 import getDataCategoryNav from '../../application/use_cases/generals/category/getDataCategoryNavnar.js';
 import changeStatusComment from '../../application/use_cases/generals/posts/comment/changeStatus.js';
 import deleteComment from '../../application/use_cases/generals/posts/comment/deleteComment.js';
@@ -10,6 +13,7 @@ import getDataContentPage from '../../application/use_cases/generals/posts/getDa
 import getDataNotify from '../../application/use_cases/generals/posts/getDataNotify.js';
 import getDataRouterSlug from '../../application/use_cases/generals/Router/getDataRouterSlug.js';
 import getDataLayout from '../../application/use_cases/generals/settings/getDataLayout.js';
+import changeFieldsData from '../../application/use_cases/generals/users/changeFields.js';
 import { REQUEST_CUSTOM } from "../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../helpers/catchingAsyncAwait.aysnc.js";
 import CacheDynamic from '../../utils/constants.js';
@@ -20,6 +24,8 @@ import BaseController from "./BaseController.js";
 
 class GeneralController extends BaseController {
     constructor(
+        userRepository,
+        authService,
         settingRepository,
         generalService,
         postRepository,
@@ -27,9 +33,12 @@ class GeneralController extends BaseController {
         categoriesRepository,
         commentRepository,
         redisClient,
-        socketService
+        socketService,
+        notifyRepository
     ){
         super({
+            userRepository,
+            authService,
             settingRepository,
             generalService,
             redisClient,
@@ -37,7 +46,8 @@ class GeneralController extends BaseController {
             postService,
             categoriesRepository,
             commentRepository,
-            socketService
+            socketService,
+            notifyRepository
         })
     }
 
@@ -156,7 +166,40 @@ class GeneralController extends BaseController {
 
         REQUEST_CUSTOM(res,'Get comment newest successfully', response)
     })  
-      
+
+
+    //Authencated
+    checkEmailExists = catchingAsyncAwait(async(req,res)=> {
+        const {email} = req.query
+        const response = await checkExistsMail(email,this.userRepository)
+
+        REQUEST_CUSTOM(res,'Check success mail', response)
+    })
+
+    loginForm = catchingAsyncAwait(async(req,res)=> {
+        const payload = req.body
+        const response = await loginForm(payload,this.userRepository,this.authService)
+
+        REQUEST_CUSTOM(res,'Login success', response)
+    })
+
+    registerForm = catchingAsyncAwait(async(req,res)=> {
+        const payload = req.body
+        const response = await registerForm(payload,this.userRepository,this.authService)
+
+        REQUEST_CUSTOM(res,'Register success', response)
+    })
+
+
+    changeFieldsDataUser = catchingAsyncAwait(async(req,res)=> {
+        const payload = req.body;
+        payload.avatar = req.file || null
+        console.log(payload,'payloadpayloadpayloadpayload')
+        const {id} =  req.params
+        const response = await changeFieldsData(id,payload,this.userRepository,this.authService)
+
+        REQUEST_CUSTOM(res,'Update thành công', response)
+    })
 }
 
 

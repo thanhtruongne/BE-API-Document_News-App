@@ -1,9 +1,10 @@
 import moment from "moment";
 import mongoose, { Schema } from "mongoose";
+import { generateImageURL } from "../../../../config/cloudinary/uploadResource.js";
 let Users = new Schema({
     full_name : {
         type:String,
-        required : true
+        default: null
     },
     email : {
         type:String,
@@ -67,10 +68,18 @@ let Users = new Schema({
 Users.virtual('formatCreatedAt').get(function () {
     return moment(this.createdAt).fromNow(); 
 });
+
+
+Users.virtual('imageURL').get(function(){
+    if (!this.avatar) return null;
+    return generateImageURL(this.avatar);
+})
   
-Users.set('toJSON', { virtuals: true,transform : function (doc, ret) {
+// Users.set('toJSON', { virtuals: true });
+
+Users.set('toJSON', { virtuals: true, transform : function (doc, ret) {
     ret.id = ret._id; 
-    delete ret._id;  
+    delete ret._id;   
 } });
 Users.set('toObject', { virtuals: true,transform : function (doc, ret) {
     ret.id = ret._id; 

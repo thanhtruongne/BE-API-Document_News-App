@@ -13,11 +13,18 @@ const CacheDynamic = {
 const constantModel = {
     POSTS : "Posts",
     CATEGORIES : "Categories",
-    
+}
+
+const USER_INFO_CHANGE = {
+    AVATAR: 'avatar',
+    FULL_NAME: 'full_name',
+    EMAIL_CHANGE: 'email',
+    CHANGE_PASSWORD: 'password',
 }
 
 
 export default {
     ...CacheDynamic,
-    ...constantModel
+    ...constantModel,
+    ...USER_INFO_CHANGE
 }

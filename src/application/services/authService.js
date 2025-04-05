@@ -7,8 +7,10 @@ const authServiceApp = (authService) => {
 
     const vertifyToken = async(token) => await authService.vertify(token)
 
+    const uploadAvatarImage = async(public_id,file) => authService.uploadAvatarImage(public_id,file)
+
     return {
-        hashPassword,comparePassword,vertifyToken
+        hashPassword,comparePassword,vertifyToken,uploadAvatarImage
     }
 }
 
