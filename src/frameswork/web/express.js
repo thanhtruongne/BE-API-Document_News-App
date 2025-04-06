@@ -6,6 +6,15 @@ import morgan from 'morgan';
 import i18n from '../../config/i18n/i18n.config.js';
 
 
+
+
+export default class SetupExpressServer {
+        constructor(app) {
+           this.app = app
+        }
+
+}  
+
 const ConfigureExpress = (app) => {
     app.use(morgan('dev'));
 
@@ -44,4 +53,4 @@ const ConfigureExpress = (app) => {
     // app.use(returnError)
 }
 
-export default ConfigureExpress
+// export default ConfigureExpress

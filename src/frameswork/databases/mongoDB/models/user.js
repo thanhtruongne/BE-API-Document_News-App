@@ -57,9 +57,12 @@ let Users = new Schema({
         enum : ['User','Admin'],
         default : "User"
     },
-    posts : [
+    post_saves : [
         {type : mongoose.Types.ObjectId,ref:'Posts'}
-    ]   
+    ],
+    post_likes : [
+        {type : mongoose.Types.ObjectId,ref:'Posts'}
+    ],
     
 },{
     timestamps : true

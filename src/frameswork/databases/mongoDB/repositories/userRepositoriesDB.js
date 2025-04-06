@@ -51,11 +51,11 @@ const userRepositoryDB = () => {
 
     const deleteResource = async(_id) => await userModel.findByIdAndDelete(_id)
 
-    const updateDataByQuery = async(id, query, fieldsToSelect = 'email full_name avatar imageURL id status createdAt updatedAt role') => {
-        return await userModel.findByIdAndUpdate(id, query, {
-            lean: true,
-            new: true,
-            select: fieldsToSelect
+    const updateDataByQuery = async(id,query) => {
+        return await userModel.findByIdAndUpdate(id,query,{
+            lean : true,
+            new : true,
+            select : '-password'
         })
     }
 
