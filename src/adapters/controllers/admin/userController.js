@@ -88,9 +88,6 @@ class userController extends BaseController {
         const response = await storeUser(payload,this.userRepository,this.authService);
         REQUEST_CUSTOM(res,'Tạo thành công',response) 
     })
-        
-    
-     
 }
 
 

@@ -1,3 +1,4 @@
+import express from 'express'
 import GeneralController from "../../../adapters/controllers/generalController.js"
 import categoriesRepositoriesApp from "../../../application/repositories/categoriesRepositories.app.js"
 import commentRepositoriesApp from "../../../application/repositories/commentRepositories.app.js"
@@ -23,63 +24,64 @@ import { CatchingCategoryData, CatchingRenderData } from "../middlewares/redis/i
 
 
 
-const generalRouter = (express,redisCli,socketService) =>  {
-   const router = express.Router()  
-
-   //load depend
-   const generalControllerInit = new GeneralController(
-      userRepositoriesApp(userRepositoriesDB()),
-      authServiceApp(authServicesFrame()),
-      settingRepositoriesApp(settingReposotoriesDB()),
-      generalServiceApp(generalService()),
-      postRepositoriesApp(postRepositoriesDB()),
-      postServiceApp(postService()),
-      categoriesRepositoriesApp(categoriesRepositoriesDB()),
-      commentRepositoriesApp(commentRepositoriesDB()),
-      redisCli,
-      socketService,
-      notifyRepositoriesApp(notifyRepositoriesDB())
-   )
-
-   // console.log(socketService,'sockerService')
+export default class GeneralRoutes {
 
 
-   //authen
-   router.get('/author/check-email',generalControllerInit.checkEmailExists)
+   constructor(redisCli,socket) {
+      this.router = express.Router();
+      this.redisCli = redisCli;
+      this.socket = socket;
+   }
 
-   router.post('/author/login',generalControllerInit.loginForm)
-
-   router.post('/author/register',generalControllerInit.registerForm)
 
 
-   router.get('/setting/get-data-layout',generalControllerInit.getDataLayout)
+   routes() {
+      const generalControllerInit = new GeneralController(
+         userRepositoriesApp(userRepositoriesDB()),
+         authServiceApp(authServicesFrame()),
+         settingRepositoriesApp(settingReposotoriesDB()),
+         generalServiceApp(generalService()),
+         postRepositoriesApp(postRepositoriesDB()),
+         postServiceApp(postService()),
+         categoriesRepositoriesApp(categoriesRepositoriesDB()),
+         commentRepositoriesApp(commentRepositoriesDB()),
+         this.redisCli,
+         this.socket,
+         notifyRepositoriesApp(notifyRepositoriesDB())
+      )
+
+      this.router.get('/author/check-email',generalControllerInit.checkEmailExists)
+
+      this.router.post('/author/login',generalControllerInit.loginForm)
    
-   router.get('/post/getData',[CatchingRenderData(redisCli,CacheDynamic.POST_DATA_NEW_NOTIFY)],generalControllerInit.getDataPostNew)
-
-   router.get('/categories/getData',[CatchingCategoryData(redisCli,CacheDynamic.CATEGORIES_DATA_NAVBAR)],generalControllerInit.getDataCategoryNavbar)
+      this.router.post('/author/register',generalControllerInit.registerForm)
    
-   router.get('/post/getContent-data',[CatchingCategoryData(redisCli,CacheDynamic.POST_DATA_CONTENT_PAGE_SIDE)],generalControllerInit.getContentPageData);
+   
+      this.router.get('/setting/get-data-layout',generalControllerInit.getDataLayout)
+      
+      this.router.get('/post/getData',[CatchingRenderData(this.redisCli,CacheDynamic.POST_DATA_NEW_NOTIFY)],generalControllerInit.getDataPostNew)
+   
+      this.router.get('/categories/getData',[CatchingCategoryData(this.redisCli,CacheDynamic.CATEGORIES_DATA_NAVBAR)],generalControllerInit.getDataCategoryNavbar)
+      
+      this.router.get('/post/getContent-data',[CatchingCategoryData(this.redisCli,CacheDynamic.POST_DATA_CONTENT_PAGE_SIDE)],generalControllerInit.getContentPageData);
+   
+   
+      this.router.get('/:slug',generalControllerInit.getDataSlugRouter)
+   
+      this.router.post('/post/comment/store/:id',generalControllerInit.storeCommentBlog)
+   
+      this.router.get('/post/comment/getMoreReply/:id',generalControllerInit.getMoreReplyComment)
+   
+      this.router.delete('/post/comment/delete/:id',generalControllerInit.deleteCommentBlog)
+   
+      this.router.get('/post/comment/getCommentByQuery/:id',generalControllerInit.getCommentQueryBlog)
+   
+      this.router.put('/post/comment/changeStatus/:id',generalControllerInit.changeStatusComment)
+   
+   
+     //user detail
+      this.router.put('/user/changeFields/:id',uploadData.single('avatar'),generalControllerInit.changeFieldsDataUser)
 
-
-   router.get('/:slug',generalControllerInit.getDataSlugRouter)
-
-   router.post('/post/comment/store/:id',generalControllerInit.storeCommentBlog)
-
-   router.get('/post/comment/getMoreReply/:id',generalControllerInit.getMoreReplyComment)
-
-   router.delete('/post/comment/delete/:id',generalControllerInit.deleteCommentBlog)
-
-   router.get('/post/comment/getCommentByQuery/:id',generalControllerInit.getCommentQueryBlog)
-
-   router.put('/post/comment/changeStatus/:id',generalControllerInit.changeStatusComment)
-
-
-  //user detail
-   router.put('/user/changeFields/:id',uploadData.single('avatar'),generalControllerInit.changeFieldsDataUser)
-
-
-   return router
+      return this.router
+   }
 }
-
-
-export default generalRouter        

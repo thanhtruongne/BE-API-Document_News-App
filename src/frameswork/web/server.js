@@ -1,8 +1,8 @@
 import { createTerminus } from '@godaddy/terminus';
 
 const serverConfig = (app,server,mongoose) => {
-    const healthCheck = () => {
-        if (
+      const healthCheck = () => {
+          if (
             mongoose.connection.readyState === 0 ||
             mongoose.connection.readyState === 3
           ) {

@@ -1,6 +1,6 @@
 import i18n from "../../../../config/i18n/i18n.config.js"
 import keyTokenEntities from "../../../../entities/keyToken.js"
-import { Api401Error, Api403Error, BusinessLogicError } from "../../../../frameswork/web/plugins/error.response.js"
+import { Api401Error, BusinessLogicError } from "../../../../frameswork/web/plugins/error.response.js"
 import { validateRequestLogin } from "../../../../utils/auth.utils.js"
 import { getSelectData } from "../../../../utils/index.utils.js"
 
@@ -8,8 +8,8 @@ import { getSelectData } from "../../../../utils/index.utils.js"
 const loginForm = async(payload,userRepository,authService) => {
     const {email,password} = payload
 
-    if(!validateRequestLogin({email,password})) {
-            throw new Api403Error(i18n.translate("error.not_found.data"))
+    if(!email || !password || !validateRequestLogin({email,password})) {
+        throw new Api401Error(i18n.translate("error.not_found.data"))
     }
     const check_user = await userRepository.findByQuery({email,status : 'Active'},'role _id status email password')
 
