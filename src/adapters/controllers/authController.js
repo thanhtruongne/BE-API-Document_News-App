@@ -8,10 +8,10 @@ import { REQUEST_CUSTOM } from "../../frameswork/web/plugins/successReponse.js";
 import catchingAsyncAwait from "../../helpers/catchingAsyncAwait.aysnc.js";
 
 class AuthController {
-    constructor(userRepository,userRepositoryIP,authService,authServiceIP,redisClient){
+    constructor(userRepository,authService,redisClient){
         this.redisClient = redisClient;
-        this.userRepository =  userRepositoryIP(userRepository());
-        this.authService =  authServiceIP(authService())    
+        this.userRepository =  userRepository;
+        this.authService =  authService    
     }
 
 

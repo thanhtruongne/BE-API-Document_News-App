@@ -1,43 +1,50 @@
-const connectionInit = (mongoose,url) => {
+import mongoose from "mongoose";
+import { config } from "../../../config/config.js";
+
+const logger = config.createLogger('connectDB')
+
+const connectionInit = () => {
   const connectToMongo = () => {
     if(1 == 1) { // môi trg dev
       mongoose.set('debug',true);
       mongoose.set('debug',{color : true});
     }
     mongoose
-      .connect(url)
+      .connect(config.DATABASE_URL)
       .then(_ => {
-        console.log('Successfully connected MongoDB')
+        logger.info('Successfully connected MongoDB')
     })
     .catch( err => {
-      console.log('DB connection error');
+      logger.error('DB connection error');
       throw new Error(err);
     });
 
-    return  mongoose;
+    mongoose.connection.on('connected', () => {
+      logger.info('Connected to MongoDB!');
+    });
+  
+    mongoose.connection.on('reconnected', () => {
+      logger.info('MongoDB reconnected!');
+    });
+  
+    mongoose.connection.on('error', (error) => {
+      logger.error(`Error in MongoDb connection: ${error}`);
+      mongoose.disconnect();
+    });
+  
+    mongoose.connection.on('disconnected', () => {
+      logger.error(  
+        `MongoDB disconnected! Reconnecting in ${
+          options.reconnectInterval / 1000
+        }s...`
+      );
+      setTimeout(() => connectToMongo(), options.reconnectInterval);
+    });
+
+    return mongoose
   }
 
-  mongoose.connection.on('connected', () => {
-    console.info('Connected to MongoDB!');
-  });
-
-  mongoose.connection.on('reconnected', () => {
-    console.info('MongoDB reconnected!');
-  });
-
-  mongoose.connection.on('error', (error) => {
-    console.error(`Error in MongoDb connection: ${error}`);
-    mongoose.disconnect();
-  });
-
-  mongoose.connection.on('disconnected', () => {
-    console.error(  
-      `MongoDB disconnected! Reconnecting in ${
-        options.reconnectInterval / 1000
-      }s...`
-    );
-    setTimeout(() => connectToMongo(), options.reconnectInterval);
-  });
+ 
 
   return {
     connectToMongo

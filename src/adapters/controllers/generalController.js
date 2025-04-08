@@ -177,6 +177,7 @@ class GeneralController extends BaseController {
     })
 
     loginForm = catchingAsyncAwait(async(req,res)=> {
+        console.log(req,'asdasdsassssssssssssssssss')
         const payload = req.body
         const response = await loginForm(payload,this.userRepository,this.authService)
 
