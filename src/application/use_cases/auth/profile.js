@@ -4,7 +4,7 @@ const profile = async(store,userRepository) => {
     const data = await userRepository.findByQuery({
         _id : store?.userID, 
         status : "Active"
-    },'_id avatar role email phone address status full_name',false)
+    },'_id avatar role email phone address status full_name createdAt',false)
     if(!data) throw new Api403Error(i18n.translate("error.not_found.data"))
         
     return data

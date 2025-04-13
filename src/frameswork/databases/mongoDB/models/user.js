@@ -69,6 +69,7 @@ let Users = new Schema({
 })
 
 Users.virtual('formatCreatedAt').get(function () {
+    console.log(this.createdAt,'asdasdsadsad');
     return moment(this.createdAt).fromNow(); 
 });
 

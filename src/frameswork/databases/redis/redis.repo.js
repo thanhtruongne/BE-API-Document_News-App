@@ -84,11 +84,36 @@ class RedisUtilsRepo {
     }
 
     //Sub
-    static async subscribe(channel, callback) {
-        await instanceRedis.subscriber.subscribe(channel, (message) => {
-            callback(JSON.parse(message));
+    static async subscribe(channel) {
+        try {
+            await instanceRedis.subscriber.subscribe(channel);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async unsubscribe(channel) {
+        try {
+            await instanceRedis.subscriber.unsubscribe(channel);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static onMessage(callback) {
+        instanceRedis.subscriber.on('message', (channel, message) => {
+            try {
+                const parsedMessage = JSON.parse(message);
+                callback(channel, parsedMessage);
+            } catch (error) {
+               
+                callback(channel, message);
+            }
         });
     }
+
 }
 
 

@@ -2,6 +2,7 @@ import moment from 'moment/moment.js';
 import querystring from 'querystring';
 import checkExistsMail from '../../application/use_cases/generals/auths/checkExistsMail.js';
 import loginForm from '../../application/use_cases/generals/auths/loginForm.js';
+import logOutForm from '../../application/use_cases/generals/auths/logOutForm.js';
 import registerForm from '../../application/use_cases/generals/auths/registerForm.js';
 import getDataCategoryNav from '../../application/use_cases/generals/category/getDataCategoryNavnar.js';
 import changeStatusComment from '../../application/use_cases/generals/posts/comment/changeStatus.js';
@@ -11,6 +12,7 @@ import getMoreReply from '../../application/use_cases/generals/posts/comment/get
 import storeComment from '../../application/use_cases/generals/posts/comment/storeComment.js';
 import getDataContentPage from '../../application/use_cases/generals/posts/getDataContentPage.js';
 import getDataNotify from '../../application/use_cases/generals/posts/getDataNotify.js';
+import likePost from '../../application/use_cases/generals/posts/post-like/likePost.js';
 import getDataRouterSlug from '../../application/use_cases/generals/Router/getDataRouterSlug.js';
 import getDataLayout from '../../application/use_cases/generals/settings/getDataLayout.js';
 import changeFieldsData from '../../application/use_cases/generals/users/changeFields.js';
@@ -19,7 +21,6 @@ import catchingAsyncAwait from "../../helpers/catchingAsyncAwait.aysnc.js";
 import CacheDynamic from '../../utils/constants.js';
 import { omit } from '../../utils/index.utils.js';
 import BaseController from "./BaseController.js";
-
 
 
 class GeneralController extends BaseController {
@@ -191,8 +192,32 @@ class GeneralController extends BaseController {
         REQUEST_CUSTOM(res,'Register success', response)
     })
 
+    logOutForm = catchingAsyncAwait(async(req,res)=> {
+        const response = await logOutForm(req.store,this.userRepository)
+
+        REQUEST_CUSTOM(res,'Logout success', response)
+    })
+
 
     changeFieldsDataUser = catchingAsyncAwait(async(req,res)=> {
+        const payload = req.body;
+        payload.avatar = req.file || null
+        const {id} =  req.params
+        const response = await changeFieldsData(id,payload,this.userRepository,this.authService)
+
+        REQUEST_CUSTOM(res,'Update thành công', response)
+    })
+
+    handleLikePost = catchingAsyncAwait(async(req,res)=> {
+        const { id } = req.params;
+        const payload = req.body;
+
+        const response = await likePost(id,payload,req.user,this.postRepository,this.postService)
+
+        REQUEST_CUSTOM(res,'Action like post by user', response)
+    })
+
+    handleUnLikePost = catchingAsyncAwait(async(req,res)=> {
         const payload = req.body;
         payload.avatar = req.file || null
         console.log(payload,'payloadpayloadpayloadpayload')

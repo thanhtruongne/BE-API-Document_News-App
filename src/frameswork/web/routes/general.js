@@ -55,7 +55,8 @@ export default class GeneralRoutes {
       this.router.post('/author/login',generalControllerInit.loginForm)
    
       this.router.post('/author/register',generalControllerInit.registerForm)
-   
+      
+      this.router.post('/author/logout',generalControllerInit.logOutForm)
    
       this.router.get('/setting/get-data-layout',generalControllerInit.getDataLayout)
       
@@ -77,7 +78,10 @@ export default class GeneralRoutes {
       this.router.get('/post/comment/getCommentByQuery/:id',generalControllerInit.getCommentQueryBlog)
    
       this.router.put('/post/comment/changeStatus/:id',generalControllerInit.changeStatusComment)
-   
+
+      //handle like 
+      this.router.post('/post/like/:id',generalControllerInit.handleLikePost)
+      this.router.post('/post/unlike/:id',generalControllerInit.handleUnLikePost)
    
      //user detail
       this.router.put('/user/changeFields/:id',uploadData.single('avatar'),generalControllerInit.changeFieldsDataUser)
