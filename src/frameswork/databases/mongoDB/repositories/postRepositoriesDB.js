@@ -2,153 +2,156 @@ import { omit } from "../../../../utils/index.utils.js"
 import posts from "../models/posts.js"
 const postRepositoriesDB = () => {
 
-    const createResource = async(payloadEntities) => {
+    const createResource = async (payloadEntities) => {
         return await posts.create({
-            title : payloadEntities.getTitle(),
-            description : payloadEntities.getDescription(),
-            content : payloadEntities.getContent(),
-            thumb : payloadEntities.getThumb(),
-            status : payloadEntities.getStatus(),
-            categories_id : payloadEntities.getCategoriesID(),
-            images : payloadEntities.getImages(),
-            isTrending : payloadEntities.getIsTrending(),
-            type : payloadEntities.getType(),
-            author_id : payloadEntities.getAuhtorID() ?? null,
-            videos : payloadEntities.getVideos() ?? null,
-            media_type : payloadEntities.getMediaType()
-        })  
+            title: payloadEntities.getTitle(),
+            description: payloadEntities.getDescription(),
+            content: payloadEntities.getContent(),
+            thumb: payloadEntities.getThumb(),
+            status: payloadEntities.getStatus(),
+            categories_id: payloadEntities.getCategoriesID(),
+            images: payloadEntities.getImages(),
+            isTrending: payloadEntities.getIsTrending(),
+            type: payloadEntities.getType(),
+            author_id: payloadEntities.getAuhtorID() ?? null,
+            videos: payloadEntities.getVideos() ?? null,
+            media_type: payloadEntities.getMediaType()
+        })
     }
 
-    const fetchAllData = async(params) => {
-        return await posts.find(omit(params,'page','perPage','select','sort'))
-        .select(params.select)  
-        .skip(params.perPage * params.page - params.perPage)
-        .limit(params.perPage)
-        .populate([ 
+    const fetchAllData = async (params) => {
+        return await posts.find(omit(params, 'page', 'perPage', 'select', 'sort'))
+            .select(params.select)
+            .skip(params.perPage * params.page - params.perPage)
+            .limit(params.perPage)
+            .populate([
+                {
+                    path: "categories_id",
+                    select: "title _id parent_id",
+                },
+                {
+                    path: "author_id",
+                    select: "_id full_name"
+                }
+            ])
+            .sort(params?.sort)
+            .lean()
+            .exec()
+
+    }
+
+
+    const fetchCountAll = async (params) => {
+        return await posts.countDocuments(omit(params, 'page', 'perPage', 'select'));
+    }
+
+    const findDetail = async (query) => {
+        return await posts.find(query).populate([
             {
-                path : "categories_id",
-                select : "title _id parent_id",
+                path: "categories_id",
+                select: "title _id parent_id",
             },
             {
-                path : "author_id",
-                select : "_id full_name"
-            }
-        ])
-        .sort(params?.sort)
-        .lean()
-        .exec()
-
-    }
-
-
-    const fetchCountAll = async(params) => {
-       return await posts.countDocuments(omit(params,'page','perPage','select'));
-    }
-
-    const findDetail = async(query) => {
-        return await posts.find(query).populate([ 
-            {
-                path : "categories_id",
-                select : "title _id parent_id",
-            },
-            {
-                path : "author_id",
-                select : "_id full_name slug status avatar",
-                match : { status : "Active" }
+                path: "author_id",
+                select: "_id full_name slug status avatar",
+                match: { status: "Active" }
             }
         ]).lean().exec()
 
     }
 
-    const findById = async(_id) => {
+    const findById = async (_id) => {
         return await posts.findById(_id).populate([
             {
-                path : "author_id",
-                select : "title _id",
+                path: "author_id",
+                select: "title _id",
             },
             {
-                path : "categories_id",
-                select : "title _id parent_id slug",
-            },  
+                path: "categories_id",
+                select: "title _id parent_id slug",
+            },
+            // {
+            //     path: "comments",
+            //     select: 'full_name _id parent_id content createdAt status level replyCount like unLike',  // Chọn fields cần thiết
+            //     match: { 
+            //         status: 'Active',
+            //         parent_id: null  
+            //     },
+            //     options: {
+            //         limit: 5,
+            //         sort: { like: -1 }
+            //     },
+            // }
+        ])
+            .lean()
+            .exec();
+    }
+
+    const findByIDandUpdatePayload = async (_id, payload) => {
+        return await posts.findByIdAndUpdate(_id, payload, {
+            new: true
+        })
+    }
+
+    const findByIdNoneLean = async (_id) => {
+        return await posts.findById(_id).populate([
+            // {
+            //     path : "categories_id",
+            //     select : "title _id parent_id slug",
+            // },  
             {
                 path: "comments",
-                select: 'full_name _id parent_id content createdAt status level replyCount like',  // Chọn fields cần thiết
-                match: { 
-                    status: 'Active',
-                    parent_id: null  
-                },
-                options: {
-                    limit: 5,
-                    sort: { like: -1 }
-                },
+                select: "full_name _id parent_id content createdAt status postId",
             }
         ])
-        .lean()
-        .exec();
+            // .lean()
+            .exec();
     }
 
-    const findByIDandUpdatePayload = async(_id,payload) => {
-        return await posts.findByIdAndUpdate(_id,payload,{
-            new : true
-        })
-    }
-
-    const findByIdNoneLean = async(_id) => {
-        return await posts.findById(_id).populate([
-            {
-                path : "categories_id",
-                select : "title _id parent_id slug",
-            },  
-            {
-                path : "comments",
-                select : "full_name _id parent_id content createdAt status postId",
-            }
-        ])
-        // .lean()
-        .exec();
-    }
-
-    const findByIDandUpdate = async(_id,payload) => {
+    const findByIDandUpdate = async (_id, payload) => {
         const data = {
-            title : payload.getTitle(),
-            description : payload.getDescription(),
-            categories_id : payload.getCategoriesID(),
-            status : payload.getStatus(),
-            content : payload.getContent(),
-            thumb : payload.getThumb(),
-            images : payload.getImages(),
-            isTrending : payload.getIsTrending(),
-            author_id : payload.getAuhtorID(),
-            type : payload.getType(),
+            title: payload.getTitle(),
+            description: payload.getDescription(),
+            categories_id: payload.getCategoriesID(),
+            status: payload.getStatus(),
+            content: payload.getContent(),
+            thumb: payload.getThumb(),
+            images: payload.getImages(),
+            isTrending: payload.getIsTrending(),
+            author_id: payload.getAuhtorID(),
+            type: payload.getType(),
         }
-        return await posts.findByIdAndUpdate(_id,{$set : data},{
-            runValidators : true,   
-            new : true
+        return await posts.findByIdAndUpdate(_id, { $set: data }, {
+            runValidators: true,
+            new: true
         })
     }
 
 
-    const findByQuery = async(query) => {
-        return await posts.find(omit(query,'sort','select','limit'))
-        .select(query.select)
-        .limit(query.limit)
-        .sort(query.sort)
-        .populate([ 
-            {
-                path : "categories_id",
-                select : "title _id parent_id",
-            },
-            {
-                path : "author_id",
-                select : "_id full_name avatar"
-            },
-            {
-                path : "comments",
-            }
-        ])
-        // .lean()
-        .exec()
+    const findByQuery = async (query) => {
+        return await posts.find(omit(query, 'sort', 'select', 'limit'))
+            .select(query.select)
+            .limit(query.limit)
+            .sort(query.sort)
+            .populate([
+                {
+                    path: "categories_id",
+                    select: "title _id parent_id",
+                },
+                {
+                    path: "author_id",
+                    select: "_id full_name avatar"
+                },
+                {
+                    path: "comments",
+                }
+            ])
+            // .lean()
+            .exec()
     }
+
+
+
 
     return {
         createResource,
@@ -160,7 +163,6 @@ const postRepositoriesDB = () => {
         findByIDandUpdatePayload,
         findByIDandUpdate,
         findByQuery
-
     }
 }
 

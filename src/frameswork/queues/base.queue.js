@@ -1,6 +1,7 @@
 import { BullAdapter, ExpressAdapter, createBullBoard } from '@bull-board/express';
 import { Queue } from "bullmq";
 import { config } from "../../config/config.js";
+import RedisUtilsRepo from '../databases/redis/redis.repo.js';
 
 
 let bullAdapters = [];
@@ -12,6 +13,7 @@ export class BaseQueue {
      
     constructor(queueName) {
         this.queue = new Queue(queueName,`${config.REDIS_URL}`)
+        this.redis = RedisUtilsRepo
         bullAdapters.push(new BullAdapter(this.queue));
         bullAdapters = [...new Set(bullAdapters)];
         serverAdapter = new ExpressAdapter();

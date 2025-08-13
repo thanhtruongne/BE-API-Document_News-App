@@ -1,4 +1,5 @@
-import { BaseQueue } from "./base.queue.";
+import { postWorker } from "../workers/posts.worker.js";
+import { BaseQueue } from "./base.queue.js";
 
 
 
@@ -6,6 +7,15 @@ import { BaseQueue } from "./base.queue.";
 class PostServiceQueue extends BaseQueue {
     constructor() {
         super('posts')
+        
+        //khai báo các service queue và worker
+        this.processJob('addPostLike', 4, postWorker.handlePostLike)
+    }
+
+
+
+    addPostLike(name,data) {
+        this.addJob(name,data)
     }
 }
 

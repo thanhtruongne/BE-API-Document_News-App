@@ -1,11 +1,11 @@
 export default function categoriesRepositoriesApp(repository) {
     const createResource = (payload) => repository.createResource(payload);
 
-    const updateResource = (id,payload) => repository.updateResource(id,payload);
-    
-    const getTreeData = (parentID,query) => repository.fetchAllDataTree(parentID,query)
+    const updateResource = (id, payload) => repository.updateResource(id, payload);
 
-    const changeStatus = (_id,status) => repository.changeStatus(_id,status)
+    const getTreeData = (parentID, query) => repository.fetchAllDataTree(parentID, query)
+
+    const changeStatus = (_id, status) => repository.changeStatus(_id, status)
 
     const removeResource = (_id) => repository.removeResource(_id)
 
@@ -13,12 +13,16 @@ export default function categoriesRepositoriesApp(repository) {
 
     const getDetailResource = (_id) => repository.getDetailResource(_id)
 
-    const findByQueryAndUpdateMany = (query,payload) => repository.findByQueryAndUpdateMany(query,payload)
-    
+    const findByQueryAndUpdateMany = (query, payload) => repository.findByQueryAndUpdateMany(query, payload)
+
     const getParentTree = (parent_id) => repository.getParentTree(parent_id)
- 
+
+    const getParentAndChildCategories = (id) => repository.getParentAndChildCategories(id)
+
+    const getAllChildren = (id,select) => repository.getAllChildren(id,select);
+
     return {
-        createResource, 
+        createResource,
         updateResource,
         findByQueryAndUpdateMany,
         getTreeData,
@@ -26,6 +30,8 @@ export default function categoriesRepositoriesApp(repository) {
         removeResource,
         findByQuery,
         getDetailResource,
-        getParentTree
+        getParentTree,
+        getParentAndChildCategories,
+        getAllChildren
     };
 }

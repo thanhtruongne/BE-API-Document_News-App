@@ -3,7 +3,6 @@ import { REQUEST_CUSTOM } from '../../../plugins/successReponse.js'
 
 export default function catchingMiddlewareCategories(redisClient,key) {
   return async function(req,res,next){
-    console.log(redisClient,'redisClientredisClient')
     const extra_params = req.params.id || ''
     const data = await redisClient.get(key + extra_params + "_")  
     if(data) {

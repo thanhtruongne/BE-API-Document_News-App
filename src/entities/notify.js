@@ -1,28 +1,26 @@
 const notifyEntities = ({
     _id = null, 
-    title = null,
-    full_name =  null,
-    link = null,
-    content = null ,
+    content = null,
+    url = null,
+    subject = null ,
     postId = null,
     type = null,
-    recipient = null,
-    read = false,
-    author = null,
+    userId = null,
+    markAread = false,
+    timeMarkRead = null,
+    status = null,
 }) => {
-
     return  {
         getID: () => _id,
-        getFullName: () => full_name,
-        getLink :() => link,
+        getSubject :() => subject,
         getContent: () => content,
-        getPostID: () => postId,
+        getPostID: () => postId, 
         getType: () => type,
-        getRecipient: () => recipient,
-        getRead: () => read,
-        getAuthor: () => author,
-        getTitle: () => title,
+        getURL: () => url,
+        getUserID: () => userId,
+        getMarkAread: () => markAread,
+        getStatus: () => status,
+        getTimeMarkRead : () => timeMarkRead
     }
 }
-
-export default notifyEntities
+export default notifyEntities;

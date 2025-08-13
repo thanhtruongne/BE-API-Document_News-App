@@ -38,7 +38,11 @@ class Config {
             api_key : this.CLOUDINARY_KEY,
             api_secret : this.CLOUDINARY_SERECT
         })  
+
+        return cloudinary.v2
     }
+
+    
 }
 
 

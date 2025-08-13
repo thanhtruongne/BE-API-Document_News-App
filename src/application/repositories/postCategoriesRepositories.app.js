@@ -1,6 +1,6 @@
 export default function postCategoriesRepositoriesapp(repository) {
     const createResource = (payload) => repository.createResource(payload);
-    
+
     const findAll = (params) => repository.fetchAllData(params)
 
     const countAll = (params) => repository.fetchCountAll(params)
@@ -11,16 +11,12 @@ export default function postCategoriesRepositoriesapp(repository) {
 
     const findByIdNoneLean = (id) => repository.findByIdNoneLean(id)
 
-    const findByIDandUpdate = (_id,payload) => repository.findByIDandUpdate(_id,payload)
+    const findByIDandUpdate = (_id, payload) => repository.findByIDandUpdate(_id, payload)
 
-    const findByIDandUpdatePayload = (_id,payload) => repository.findByIDandUpdatePayload(_id,payload)
+    const findByIDandUpdatePayload = (_id, payload) => repository.findByIDandUpdatePayload(_id, payload)
 
     //FE
     const findByQuery = (query) => repository.findByQuery(query)
-
-
-
-    
 
     return {
         createResource,
@@ -31,6 +27,6 @@ export default function postCategoriesRepositoriesapp(repository) {
         findByIDandUpdate,
         findByQuery,
         findByIdNoneLean,
-        findByIDandUpdatePayload
+        findByIDandUpdatePayload,
     };
 }

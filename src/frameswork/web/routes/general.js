@@ -10,6 +10,7 @@ import authServiceApp from "../../../application/services/authService.js"
 import generalServiceApp from "../../../application/services/generalService.js"
 import postServiceApp from "../../../application/services/postServiceApp.js"
 import uploadData from "../../../config/cloudinary/multer.js"
+import { authencation, optionalAuth } from "../../../utils/auth.utils.js"
 import CacheDynamic from '../../../utils/constants.js'
 import categoriesRepositoriesDB from "../../databases/mongoDB/repositories/categoriesRepositoriesDB.js"
 import commentRepositoriesDB from "../../databases/mongoDB/repositories/commentRepositoriesDB.js"
@@ -23,11 +24,10 @@ import postService from "../../services/postService.js"
 import { CatchingCategoryData, CatchingRenderData } from "../middlewares/redis/index.js"
 
 
-
 export default class GeneralRoutes {
 
 
-   constructor(redisCli,socket) {
+   constructor(redisCli, socket) {
       this.router = express.Router();
       this.redisCli = redisCli;
       this.socket = socket;
@@ -47,40 +47,49 @@ export default class GeneralRoutes {
          commentRepositoriesApp(commentRepositoriesDB()),
          this.redisCli,
          this.socket,
-         notifyRepositoriesApp(notifyRepositoriesDB())
+         notifyRepositoriesApp(notifyRepositoriesDB()),
       )
 
-      this.router.get('/author/check-email',generalControllerInit.checkEmailExists)
+      this.router.get('/author/check-email', generalControllerInit.checkEmailExists)
 
-      this.router.post('/author/login',generalControllerInit.loginForm)
-   
-      this.router.post('/author/register',generalControllerInit.registerForm)
-   
-   
-      this.router.get('/setting/get-data-layout',generalControllerInit.getDataLayout)
-      
-      this.router.get('/post/getData',[CatchingRenderData(this.redisCli,CacheDynamic.POST_DATA_NEW_NOTIFY)],generalControllerInit.getDataPostNew)
-   
-      this.router.get('/categories/getData',[CatchingCategoryData(this.redisCli,CacheDynamic.CATEGORIES_DATA_NAVBAR)],generalControllerInit.getDataCategoryNavbar)
-      
-      this.router.get('/post/getContent-data',[CatchingCategoryData(this.redisCli,CacheDynamic.POST_DATA_CONTENT_PAGE_SIDE)],generalControllerInit.getContentPageData);
-   
-   
-      this.router.get('/:slug',generalControllerInit.getDataSlugRouter)
-   
-      this.router.post('/post/comment/store/:id',generalControllerInit.storeCommentBlog)
-   
-      this.router.get('/post/comment/getMoreReply/:id',generalControllerInit.getMoreReplyComment)
-   
-      this.router.delete('/post/comment/delete/:id',generalControllerInit.deleteCommentBlog)
-   
-      this.router.get('/post/comment/getCommentByQuery/:id',generalControllerInit.getCommentQueryBlog)
-   
-      this.router.put('/post/comment/changeStatus/:id',generalControllerInit.changeStatusComment)
-   
-   
-     //user detail
-      this.router.put('/user/changeFields/:id',uploadData.single('avatar'),generalControllerInit.changeFieldsDataUser)
+      this.router.post('/author/login', generalControllerInit.loginForm)
+
+      this.router.post('/author/register', generalControllerInit.registerForm)
+
+      this.router.post('/author/logout', generalControllerInit.logOutForm)
+
+      this.router.get('/setting/get-data-layout', generalControllerInit.getDataLayout)
+
+      this.router.get('/post/getData', [CatchingRenderData(this.redisCli, CacheDynamic.POST_DATA_NEW_NOTIFY)], generalControllerInit.getDataPostNew)
+
+      this.router.get('/categories/getData', [CatchingCategoryData(this.redisCli, CacheDynamic.CATEGORIES_DATA_NAVBAR)], generalControllerInit.getDataCategoryNavbar)
+
+      this.router.get('/post/getContent-data', [CatchingCategoryData(this.redisCli, CacheDynamic.POST_DATA_CONTENT_PAGE_SIDE)], generalControllerInit.getContentPageData);
+
+      this.router.get('/post/comment/getMoreReply/:id', generalControllerInit.getMoreReplyComment)
+
+      this.router.get('/post/comment/getCommentByQuery/:id', [CatchingCategoryData(this.redisCli, CacheDynamic.POST_COMMENT_QUERY)], generalControllerInit.getCommentQueryBlog)
+
+      this.router.get('/:path(*)', optionalAuth, generalControllerInit.getDataSlugRouter)
+
+      this.#routesAuthencate(generalControllerInit);
+      return this.router
+   }
+
+
+   #routesAuthencate(generalControllerInit) {
+      this.router.use(authencation) // authencated
+
+      //comment
+      this.router.post('/post/comment/store/:id', generalControllerInit.storeCommentBlog)
+      this.router.post('/post/comment/like/:id', generalControllerInit.handleLikeCommentPost)
+
+      //save post
+      this.router.post('/post/save-or-unsave/:id', generalControllerInit.handleSaveOrUnSavePost)
+      //user detail
+      this.router.put('/user/changeFields/:id', uploadData.single('avatar'), generalControllerInit.changeFieldsDataUser)
+
+
 
       return this.router
    }

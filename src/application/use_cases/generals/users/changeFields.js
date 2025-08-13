@@ -9,7 +9,7 @@ import constants from "../../../../utils/constants.js";
  * @param {object} userService - User service instance
  * @returns {object} Updated user data
  */
-const changeFieldsData = async(_id, payload, userRepository, userService) => {
+const changeFieldsData = async (_id, payload, userRepository, userService) => {
     const { type, currentPassword, newPassword, newEmail, passwordChangeMail, avatar, full_name } = payload
 
     if (!_id || !type) {
@@ -17,11 +17,11 @@ const changeFieldsData = async(_id, payload, userRepository, userService) => {
     }
 
 
-    const user = await userRepository.findByQuery({_id ,status: 'Active'}, '_id email password avatar status')
+    const user = await userRepository.findByQuery({ _id, status: 'Active' }, '_id email password avatar status')
     if (!user) {
         throw new Api403Error(i18n.translate('error.not_found.data'))
     }
-    
+
     // Define field selection for each operation type
     const getFieldsToSelect = (operationType) => {
         switch (operationType) {
@@ -43,40 +43,41 @@ const changeFieldsData = async(_id, payload, userRepository, userService) => {
             if (!await userService.comparePassword(passwordChangeMail, user.password)) {
                 throw new Api403Error(i18n.translate('errors.password_invalid'))
             }
-            
+
             return await userRepository.updateDataByQuery(_id, { email: newEmail }, getFieldsToSelect(type));
-            
+
         case constants.FULL_NAME:
             if (!full_name) {
                 throw new Api401Error(i18n.translate('error.not_found.data'))
             }
-            
+
             return await userRepository.updateDataByQuery(_id, { full_name }, getFieldsToSelect(type));
 
         case constants.AVATAR:
             if (!avatar) {
                 throw new Api403Error(i18n.translate('errors.invalid_image'))
             }
-            
+
             const imageUpload = await userService.uploadAvatarImage(user.avatar, avatar)
+            console.log(imageUpload, 'imageUpload')
             if (!imageUpload) {
                 throw new BusinessLogicError(i18n.translate('errors.upload_image'))
             }
-            
+
             return await userRepository.updateDataByQuery(_id, { avatar: imageUpload }, getFieldsToSelect(type));
 
         case constants.CHANGE_PASSWORD:
             if (!currentPassword || !newPassword) {
                 throw new Api401Error(i18n.translate('error.not_found.data'))
             }
-            
+
             if (!await userService.comparePassword(currentPassword, user.password)) {
                 throw new Api403Error(i18n.translate('errors.password_invalid'))
             }
-            
+
             const hashedPassword = await userService.hashPassword(newPassword)
             return await userRepository.updateDataByQuery(_id, { password: hashedPassword }, getFieldsToSelect(type));
-            
+
         default:
             return null;
     }

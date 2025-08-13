@@ -29,6 +29,10 @@ let Posts = new Schema({
         type: String,
         required : true,
     },
+    likeCount : {
+        type : Number,
+        default : 0
+    },
     thumb : {
         type:String,
         // required:true,
