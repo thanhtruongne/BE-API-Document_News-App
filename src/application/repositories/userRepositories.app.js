@@ -1,18 +1,23 @@
 export default function userRepositoriesApp(repository) {
     const findAll = (params) => repository.findAll(params);
-    const updateData = (payload,id) => repository.updateData(payload,id);
-    const findByQuery = (query,select,isLean) => repository.findByQuery(query,select,isLean);
+    const updateData = (payload, id) => repository.updateData(payload, id);
+    const findByQuery = (query, select, isLean) => repository.findByQuery(query, select, isLean);
     const createData = (post) => repository.createData(post);
     const countData = (params) => repository.countData(params);
     const deleteResource = (id) => repository.deleteResource(id);
-    const findByID = (id,select,islean) => repository.findByID(id,select,islean);
-    const updateDataByQuery = (id,query) => repository.updateDataByQuery(id,query);
+    const findByID = (id, select, islean) => repository.findByID(id, select, islean);
+    const updateDataByQuery = (id, query) => repository.updateDataByQuery(id, query);
+    const updateOneQuery = (id, payload) => repository.updateOneQuery(id, payload);
+    const checkExistsQuery = (payload) => repository.checkExistsQuery(payload)
+
+
+
 
     //for keyTokens model users
     const createKeyTokens = (payloadEntities) => repository.createKeyTokens(payloadEntities);
     const findUserKeyTokenID = (id) => repository.findUserKeyTokenID(id);
     const deleteKeyTokenID = (id) => repository.deleteKeyTokenID(id)
-    const updateRefreshTokenUsed = async(refreshToken,tokens,_id) => await repository.updateRefreshTokenUsed(refreshToken,tokens,_id)
+    const updateRefreshTokenUsed = async (refreshToken, tokens, _id) => await repository.updateRefreshTokenUsed(refreshToken, tokens, _id)
 
 
 
@@ -25,8 +30,10 @@ export default function userRepositoriesApp(repository) {
         createData,
         countData,
         deleteResource,
+        checkExistsQuery,
         findByID,
         updateDataByQuery,
+        updateOneQuery,
         // deleteById,
         createKeyTokens,
         findUserKeyTokenID,

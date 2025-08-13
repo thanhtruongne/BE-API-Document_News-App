@@ -22,8 +22,6 @@ const updateData = async(id,payloadEntities,categoriesRepository,routerRepositor
         title,description,parent_id,status
     })
     const response = await categoriesRepository.updateResource(id,dataEntities);
-
-    console.log(response,'addsdasd');
     if(response) {
         const routerDataEntities = routerEntities({
             model_name :response?.constructor.modelName,
@@ -32,12 +30,11 @@ const updateData = async(id,payloadEntities,categoriesRepository,routerRepositor
             slug : response.slug,
         })
         await routerRepository.updateRouterResource(response._id,routerDataEntities)
+        // await routerRepository.createRouterResource(routerDataEntities)
     }
     
     return response;
 }
-
-
 
 export default updateData;
 

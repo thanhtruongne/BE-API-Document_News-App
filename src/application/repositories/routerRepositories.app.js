@@ -3,7 +3,7 @@ export default function routerRepositoriesApp(repository) {
     
     const updateRouterResource = (id,payload) => repository.updateData(id,payload);
 
-    const findOneByQuery = (query) => repository.findOneByQuery(query);
+    const findOneByQuery = (query,select) => repository.findOneByQuery(query,select);
     
     return {
         createRouterResource,updateRouterResource,findOneByQuery

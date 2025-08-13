@@ -69,7 +69,7 @@ const handlerJWTError = err => {
 
 const handlerJWTExpiredError = err => {
     const message = `Your token has expired! Please log in again.`;
-    return new Api403Error(message)
+    return new Api401Error(message)
 }
 
 export {

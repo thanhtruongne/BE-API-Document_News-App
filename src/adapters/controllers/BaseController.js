@@ -14,9 +14,9 @@ class BaseController {
         commentRepository,
         notifyRepository,
         socketService
-    }){
-        this.userRepository =  userRepository;
-        this.authService =  authService   
+    }) {
+        this.userRepository = userRepository;
+        this.authService = authService
         this.redisClient = redisClient;
         this.categoriesRepository = categoriesRepository;
         this.settingRepository = settingRepository
@@ -33,12 +33,18 @@ class BaseController {
         const params = {};
         for (const key in query) {
             if (Object.prototype.hasOwnProperty.call(query, key)) {
-              params[key] = query[key];
+                if (key == 'limit') {
+                    params[key] = parseInt(query[key]);
+                } else {
+                    params[key] = query[key];
+                }
+
             }
         }
+        // params.limit = params.limit ? parseInt(limit) : 10;
         params.page = params.page ? parseInt(params.page, 10) : 1;
         params.perPage = params.perPage ? parseInt(params.perPage, 10) : 10;
-        
+
         return params
     }
 }

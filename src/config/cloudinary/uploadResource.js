@@ -1,6 +1,8 @@
 import streamifier from 'streamifier'
 import { BusinessLogicError } from '../../frameswork/web/plugins/error.response.js'
-import cloudinary from "./cloudinary.js"
+import { config } from '../config.js'
+
+const cloudinary = config.cloudinaryConfig()
 
 const uploadResourceSingle = (file) => {
   return new Promise((resovle,reject) => {

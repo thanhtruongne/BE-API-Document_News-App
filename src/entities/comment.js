@@ -1,7 +1,7 @@
 const commentEntities = ({
     _id = null, 
     postId = null,
-    author_id = null,
+    userId = null,
     full_name = null,
     content = null ,
     status = "Active",
@@ -13,7 +13,7 @@ const commentEntities = ({
 
         getID: () => _id,
         getPostID: () => postId,
-        getAuthorID :() => author_id,
+        getUserID:() => userId,
         getFullName: () => full_name,
         getContent: () => content,
         getParentID: () => parent_id,

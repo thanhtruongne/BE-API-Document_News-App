@@ -6,7 +6,7 @@ import NOTIFY_CONSTANST from '../../../../../utils/constants.js';
 import { getSelectData } from "../../../../../utils/index.utils.js";
 
 
-const storeComment = async (postId, user, payload, commentRepository, postRepository, notifyRepository) => {
+const storeComment = async ( id, user, payload, commentRepository, postRepository, notifyRepository) => {
     const { content, full_name, parent_id } = payload;
     if (!postId || !content || !full_name)
         throw new Api403Error(i18n.translate("error.not_found.data"))

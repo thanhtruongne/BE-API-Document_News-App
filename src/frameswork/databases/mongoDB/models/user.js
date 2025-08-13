@@ -2,93 +2,103 @@ import moment from "moment";
 import mongoose, { Schema } from "mongoose";
 import { generateImageURL } from "../../../../config/cloudinary/uploadResource.js";
 let Users = new Schema({
-    full_name : {
-        type:String,
+    full_name: {
+        type: String,
         default: null
     },
-    email : {
-        type:String,
-        required : true,
-        unique : true,
-        index : true
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        index: true
     },
-    avatar : {
-        type:String,
-        default : null
+    avatar: {
+        type: String,
+        default: null
     },
-    password : {
-        type:String,
-        required : true
+    password: {
+        type: String,
+        required: true
     },
-    status : {
-        type:String,
-        enum: ['Block', 'Active','Deleted'],
-        default : 'Active'
+    status: {
+        type: String,
+        enum: ['Block', 'Active', 'Deleted'],
+        default: 'Active'
     },
     //Token dùng để gủi qua email của user reset password
-    passwordResetToken : {
-        type:String,
-        default : null
+    passwordResetToken: {
+        type: String,
+        default: null
     },
     //Đặt thời gian mặc định cho reset password qua email
-    passwordResetExpires : {
-        type:String,
-        default : null
+    passwordResetExpires: {
+        type: String,
+        default: null
     },
-    dateOfBirth : {
+    dateOfBirth: {
         type: Date,
-        default : null
+        default: null
     },
-    gender : {
-        type:String,
-        enum: ['Male','Female','Other'],
-        required : false    
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other'],
+        required: false
     },
-    phone : {
-        type:String,
-        default : null
+    phone: {
+        type: String,
+        default: null
     },
-    address : {
-        type:String,
-        default : null
+    address: {
+        type: String,
+        default: null
     },
-    role : {
-        type : String,
-        enum : ['User','Admin'],
-        default : "User"
+    role: {
+        type: String,
+        enum: ['User', 'Admin'],
+        default: "User"
     },
-    post_saves : [
-        {type : mongoose.Types.ObjectId,ref:'Posts'}
+    viewedPosts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Posts',
+        },
     ],
-    post_likes : [
-        {type : mongoose.Types.ObjectId,ref:'Posts'}
+    post_saves: [
+        { type: mongoose.Types.ObjectId, ref: 'Posts' }
     ],
-    
-},{
-    timestamps : true
+    post_likes: [
+        { type: mongoose.Types.ObjectId, ref: 'Posts' }
+    ],
+    comment_likes: [
+        { type: mongoose.Types.ObjectId, ref: 'Comment' }
+    ]
+
+}, {
+    timestamps: true
 })
 
 Users.virtual('formatCreatedAt').get(function () {
-    console.log(this.createdAt,'asdasdsadsad');
-    return moment(this.createdAt).fromNow(); 
+    return moment(this.createdAt).fromNow();
 });
 
 
-Users.virtual('imageURL').get(function(){
+Users.virtual('imageURL').get(function () {
     if (!this.avatar) return null;
     return generateImageURL(this.avatar);
 })
-  
-// Users.set('toJSON', { virtuals: true });
 
-Users.set('toJSON', { virtuals: true, transform : function (doc, ret) {
-    ret.id = ret._id; 
-    delete ret._id;   
-} });
-Users.set('toObject', { virtuals: true,transform : function (doc, ret) {
-    ret.id = ret._id; 
-    delete ret._id;  
-} });
+Users.set('toJSON', {
+    virtuals: true, transform: function (doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+    }
+});
+Users.set('toObject', {
+    virtuals: true, transform: function (doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+    }
+});
 
-export default mongoose.model('Users',Users);   
+export default mongoose.model('Users', Users);
 
